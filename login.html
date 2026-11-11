@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Entrar · Panel de llamadas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body class="login-page">
+<main class="login-card">
+  <h1>Qué bueno verte de nuevo</h1>
+  <p class="sub">Entra para ver cómo van tus llamadas.</p>
+  <form id="form" hidden autocomplete="on">
+    <label class="lbl" for="u">Usuario</label>
+    <input class="input" id="u" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" autofocus>
+    <label class="lbl" for="p">Contraseña</label>
+    <div class="pw">
+      <input class="input" id="p" name="password" type="password" autocomplete="current-password">
+      <button type="button" id="showPw">Mostrar</button>
+    </div>
+    <label class="check"><input type="checkbox" id="remember" checked> Mantener la sesión iniciada</label>
+    <button class="btn primary block" id="go" type="submit">Entrar</button>
+    <p class="err" id="err" role="alert"></p>
+  </form>
+</main>
+<script src="js/login.js"></script>
+</body>
+</html>

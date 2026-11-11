@@ -1,0 +1,2037 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Llamadas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235048E5'/%3E%3Cg fill='white'%3E%3Crect x='7' y='13' width='3' height='6' rx='1.5'/%3E%3Crect x='12' y='9' width='3' height='14' rx='1.5'/%3E%3Crect x='17' y='6' width='3' height='20' rx='1.5'/%3E%3Crect x='22' y='11' width='3' height='10' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1F3F8; --sheet:#FFFFFF; --ink:#1B2236; --ink2:#59637A; --ink3:#8C95A8;
+  --line:#E4E8F0; --line2:#EFF2F7; --hover:#F6F8FC;
+  --accent:#5048E5; --accent-ink:#FFFFFF; --accent-soft:#ECEBFC;
+  --dim:#CCD3E1;
+  --shadow:0 1px 2px rgba(27,34,54,.04),0 14px 34px -14px rgba(27,34,54,.12);
+  --e-contesto:#5048E5; --e-contesto-bg:#ECEBFC;
+  --e-nocontesto:#A8691A; --e-nocontesto-bg:#FBF0D9;
+  --e-buzon:#5F6F8C; --e-buzon-bg:#E9EDF4;
+  --e-ocupado:#BF5520; --e-ocupado-bg:#FBE8DB;
+  --e-rechazo:#BC3A64; --e-rechazo-bg:#FBE3EB;
+  --e-fallida:#A82A2A; --e-fallida-bg:#F8DEDE;
+  --u-in:#2B8A66; --u-in-bg:#E0F2EA;
+}
+html[data-theme="dark"]{
+  --bg:#0E1220; --sheet:#161B2C; --ink:#E8EBF4; --ink2:#A4ADC2; --ink3:#6F7992;
+  --line:#252C42; --line2:#1D2338; --hover:#1B2138;
+  --accent:#948FFF; --accent-ink:#0E1220; --accent-soft:#26254C;
+  --dim:#2F3750;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -14px rgba(0,0,0,.5);
+  --e-contesto:#A9A4FF; --e-contesto-bg:#26254C;
+  --e-nocontesto:#E2B05B; --e-nocontesto-bg:#3A2F18;
+  --e-buzon:#9BA8C4; --e-buzon-bg:#252C42;
+  --e-ocupado:#EE9559; --e-ocupado-bg:#3B2617;
+  --e-rechazo:#EE7FA3; --e-rechazo-bg:#3B1B28;
+  --e-fallida:#EE8585; --e-fallida-bg:#3B1C1C;
+  --u-in:#6FD0A5; --u-in-bg:#16352A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+html[data-theme="dark"]{color-scheme:dark}
+body{font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+.serif{font-weight:600;letter-spacing:-.025em}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Login ---------- */
+.login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.login-art{position:relative;overflow:hidden;background:#161B33;color:#F2F3FA;display:flex;flex-direction:column;justify-content:flex-start;padding:56px}
+.login-art svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%}
+.art-copy{position:relative;max-width:420px}
+.art-copy h2{font-size:clamp(32px,3.6vw,46px);line-height:1.1}
+.art-copy p{margin-top:18px;color:#A9B0CC;max-width:34ch}
+.login-side{display:flex;align-items:center;justify-content:center;padding:40px 28px}
+.login-form{width:100%;max-width:372px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px}
+.brand svg{display:block}
+.login-form h1{font-size:30px;line-height:1.15;margin:44px 0 8px}
+.login-form .sub{color:var(--ink2);margin-bottom:30px}
+.field{display:block;margin-bottom:18px}
+.field>span{display:block;font-size:13.5px;font-weight:500;margin-bottom:7px}
+.input{width:100%;height:46px;border:1px solid var(--line);background:var(--sheet);border-radius:12px;padding:0 14px;outline:none;transition:border-color .15s,box-shadow .15s}
+.input::placeholder{color:var(--ink3)}
+.input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.pw{position:relative}
+.pw .input{padding-right:78px}
+.pw button{position:absolute;right:6px;top:6px;height:34px;padding:0 10px;border-radius:8px;font-size:13px;color:var(--ink2)}
+.pw button:hover{background:var(--line2)}
+.check{display:flex;align-items:center;gap:9px;color:var(--ink2);font-size:14px;margin:4px 0 24px;cursor:pointer}
+.check input{width:17px;height:17px;accent-color:var(--accent)}
+.btn-primary{width:100%;height:48px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .12s,filter .15s}
+.btn-primary:hover{filter:brightness(1.06)}
+.btn-primary:active{transform:translateY(1px)}
+.btn-primary[disabled]{opacity:.7;cursor:progress}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.form-error{min-height:22px;margin-top:14px;color:var(--e-fallida);font-size:14px}
+.demo-hint{margin-top:22px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-size:13.5px}
+
+/* ---------- App shell ---------- */
+.topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line2)}
+.topbar-in{max-width:1180px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;gap:16px}
+.topbar .brand{margin-right:auto}
+.seg{display:flex;background:var(--line2);border-radius:11px;padding:3px}
+.seg button{height:32px;padding:0 13px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--ink2);transition:background .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--sheet);color:var(--ink);box-shadow:0 1px 2px rgba(27,34,54,.08)}
+.icon-btn{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:var(--ink2);transition:background .15s,color .15s}
+.icon-btn:hover{background:var(--line2);color:var(--ink)}
+.icon-btn.spinning svg{animation:spin .8s linear infinite}
+.me{position:relative}
+.avatar-btn{display:flex;align-items:center;gap:9px;padding:3px 10px 3px 3px;border-radius:999px;transition:background .15s}
+.avatar-btn:hover{background:var(--line2)}
+.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12.5px;font-weight:600;background:color-mix(in srgb,var(--c,var(--accent)) 16%,transparent);color:var(--c,var(--accent));flex:none}
+.avatar-btn .nm{font-size:14px;font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;background:var(--sheet);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px;z-index:40}
+.menu .who{padding:8px 10px 10px;border-bottom:1px solid var(--line2);margin-bottom:6px}
+.menu .who b{display:block;font-weight:600}
+.menu .who span{color:var(--ink3);font-size:13px}
+.menu button{width:100%;text-align:left;padding:9px 10px;border-radius:9px;font-size:14px}
+.menu button:hover,.menu a:hover{background:var(--hover)}
+.menu a{display:block;padding:9px 10px;border-radius:9px;font-size:14px;color:inherit;text-decoration:none}
+
+.wrap{max-width:1180px;margin:0 auto;padding:44px 28px 72px}
+.greet{font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:600;font-size:clamp(28px,3.6vw,40px);line-height:1.15;letter-spacing:-.025em}
+.lede{margin-top:12px;color:var(--ink2);max-width:62ch;font-size:16px}
+.demo-tag{display:inline-block;margin-left:12px;padding:2px 10px;border-radius:999px;background:var(--e-nocontesto-bg);color:var(--e-nocontesto);font-size:12.5px;font-weight:500;vertical-align:middle;letter-spacing:0}
+
+.wave-block{position:relative;margin-top:34px}
+.legend{display:flex;justify-content:flex-end;gap:18px;font-size:13px;color:var(--ink2);margin-bottom:6px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:baseline}
+.wave{width:100%;min-height:220px}
+.wave svg{display:block;overflow:visible}
+.wave rect.bar{transform-box:fill-box}
+.wave rect.up{fill:var(--accent);transform-origin:50% 100%}
+.wave rect.dn{fill:var(--dim);transform-origin:50% 0}
+.wave.rise rect.bar{animation:rise .75s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.wave svg[data-hot] rect.bar{opacity:.38}
+.wave svg[data-hot] rect.bar.on{opacity:1}
+.wave .mid{stroke:var(--line);stroke-width:1}
+.wave .zero{fill:var(--line)}
+.axis{display:flex;justify-content:space-between;color:var(--ink3);font-size:12.5px;margin-top:8px}
+.tip{position:absolute;pointer-events:none;z-index:5;background:var(--ink);color:var(--bg);padding:8px 11px;border-radius:10px;font-size:13px;line-height:1.35;white-space:nowrap;opacity:0;transform:translate(-50%,-6px);transition:opacity .12s}
+.tip.show{opacity:1}
+.tip b{font-weight:600}
+.empty-wave{display:grid;place-items:center;height:220px;color:var(--ink3)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);margin-top:30px;border-top:1px solid var(--line)}
+.kpi{padding:22px 24px 4px 0}
+.kpi+.kpi{padding-left:24px;border-left:1px solid var(--line)}
+.kpi .v{font-size:36px;line-height:1.1}
+.kpi .l{font-size:14px;font-weight:500;margin-top:4px}
+.kpi .n{font-size:13px;color:var(--ink3);margin-top:1px}
+
+.funnels{display:flex;gap:8px;overflow-x:auto;margin:40px -28px 0;padding:4px 28px 10px;scrollbar-width:none}
+.funnels::-webkit-scrollbar{display:none}
+.fchip{flex:none;display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);font-size:14px;font-weight:500;color:var(--ink2);transition:border-color .15s,background .15s,color .15s}
+.fchip:hover{border-color:var(--dim);color:var(--ink)}
+.fchip i{width:9px;height:9px;border-radius:50%;background:var(--c,var(--ink3))}
+.fchip em{font-style:normal;color:var(--ink3);font-weight:400}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.fchip[aria-pressed="true"] em{color:color-mix(in srgb,var(--bg) 65%,transparent)}
+
+.sheet{margin-top:14px;background:var(--sheet);border-radius:20px;box-shadow:var(--shadow);border:1px solid var(--line2);overflow:hidden}
+.sheet-head{display:flex;align-items:center;gap:12px;padding:20px 24px;flex-wrap:wrap}
+.sheet-head h2{font-size:21px;margin-right:auto;line-height:1.2}
+.sheet-head h2 small{font-size:14px;font-weight:400;color:var(--ink3);margin-left:8px;letter-spacing:0}
+.search{position:relative}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);pointer-events:none}
+.search .input{height:40px;width:250px;padding-left:36px;border-radius:11px;background:var(--bg);border-color:transparent}
+.search .input:focus{background:var(--sheet);border-color:var(--accent)}
+.select{height:40px;border-radius:11px;border:1px solid transparent;background:var(--bg);padding:0 34px 0 12px;appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238C95A8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;font-size:14px}
+.select:focus{background-color:var(--sheet);border-color:var(--accent);outline:none}
+.btn-ghost{height:40px;padding:0 14px;border-radius:11px;background:var(--bg);font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;color:var(--ink2);transition:color .15s,background .15s}
+.btn-ghost:hover{color:var(--ink);background:var(--line2)}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th{text-align:left;font-weight:500;font-size:13px;color:var(--ink3);padding:10px 24px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:14px 24px;border-bottom:1px solid var(--line2);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background .12s}
+tbody tr:hover,tbody tr:focus-visible{background:var(--hover)}
+tbody tr:last-child td{border-bottom:0}
+.who{display:flex;align-items:center;gap:12px;min-width:0}
+.who .n{font-weight:500;line-height:1.25}
+.who .s{font-size:13px;color:var(--ink3);line-height:1.25}
+.fun{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.fun i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.prog{color:var(--ink2);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.num{font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+.when{color:var(--ink2);white-space:nowrap}
+th.r,td.r{text-align:right}
+.badge{display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 11px 0 9px;border-radius:999px;font-size:13px;font-weight:500;white-space:nowrap;background:var(--bg-e);color:var(--fg-e)}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge[data-e="contesto"]{--bg-e:var(--e-contesto-bg);--fg-e:var(--e-contesto)}
+.badge[data-e="nocontesto"]{--bg-e:var(--e-nocontesto-bg);--fg-e:var(--e-nocontesto)}
+.badge[data-e="buzon"]{--bg-e:var(--e-buzon-bg);--fg-e:var(--e-buzon)}
+.badge[data-e="ocupado"]{--bg-e:var(--e-ocupado-bg);--fg-e:var(--e-ocupado)}
+.badge[data-e="rechazo"]{--bg-e:var(--e-rechazo-bg);--fg-e:var(--e-rechazo)}
+.badge[data-e="fallida"]{--bg-e:var(--e-fallida-bg);--fg-e:var(--e-fallida)}
+.more{display:flex;justify-content:center;padding:18px;border-top:1px solid var(--line2)}
+.more .btn-ghost{background:var(--bg)}
+.state{padding:56px 24px;text-align:center;color:var(--ink2)}
+.state b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+.state .btn-ghost{margin:18px auto 0}
+.skel{height:14px;border-radius:7px;background:linear-gradient(90deg,var(--line2),var(--line),var(--line2));background-size:200% 100%;animation:shimmer 1.3s linear infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.skel-row td{padding:19px 24px}
+.banner{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:var(--e-fallida-bg);color:var(--e-fallida);display:flex;align-items:center;gap:12px;font-size:14px}
+.banner button{margin-left:auto;font-weight:600;text-decoration:underline}
+
+/* ---------- Drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(14,18,32,.38);opacity:0;pointer-events:none;transition:opacity .22s;z-index:50}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(540px,100%);background:var(--sheet);z-index:60;transform:translateX(102%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:-24px 0 60px -30px rgba(0,0,0,.35)}
+.drawer.open{transform:none}
+.d-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0}
+.d-body{flex:1;overflow-y:auto;padding:8px 32px 40px}
+.d-name{font-size:28px;line-height:1.15;margin-top:12px}
+.d-sub{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;margin-top:12px;color:var(--ink2)}
+.d-meta{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;margin:28px 0;padding:22px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.d-meta dt{font-size:13px;color:var(--ink3)}
+.d-meta dd{font-weight:500;margin-top:2px}
+.d-sec{margin-top:26px}
+.d-sec h3{font-size:17px;line-height:1.2;margin-bottom:12px}
+.d-sec p{color:var(--ink2);max-width:62ch}
+audio{width:100%;height:42px;accent-color:var(--accent)}
+.chat{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:86%;padding:10px 14px;border-radius:16px;font-size:14.5px;line-height:1.45;white-space:pre-wrap}
+.msg small{display:block;font-size:12px;opacity:.7;margin-bottom:2px}
+.msg.agent{align-self:flex-start;background:var(--bg);border-top-left-radius:5px}
+.msg.user{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-top-right-radius:5px}
+.raw{white-space:pre-wrap;color:var(--ink2);font-size:14px}
+.d-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.d-actions a,.d-actions button{height:42px;padding:0 16px;border-radius:11px;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.d-actions .main{background:var(--accent);color:var(--accent-ink)}
+.d-actions .alt{background:var(--bg);color:var(--ink)}
+.d-actions .alt:hover{background:var(--line2)}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- Configuración de marcas y números ---------- */
+.badge[data-u="Saliente"]{--bg-e:var(--accent-soft);--fg-e:var(--accent)}
+.badge[data-u="Entrante"]{--bg-e:var(--u-in-bg);--fg-e:var(--u-in)}
+.badge[data-u="Ambos"]{--bg-e:var(--e-buzon-bg);--fg-e:var(--e-buzon)}
+.cfg-sheet{margin-top:26px}
+.cfg-sheet .sheet-head{padding-bottom:16px}
+.cfg-note{color:var(--ink2);margin-top:12px;max-width:66ch}
+.btn-add{height:40px;padding:0 16px;border-radius:11px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;transition:filter .15s}
+.btn-add:hover{filter:brightness(1.07)}
+.mono{font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+.warn{color:var(--e-nocontesto);font-size:13.5px}
+.muted{color:var(--ink3)}
+.agent-id{display:block;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}
+tr.inact td{opacity:.55}
+.row-edit{color:var(--ink3);transition:color .15s;display:inline-flex}
+tbody tr:hover .row-edit,tbody tr:focus-visible .row-edit{color:var(--ink)}
+.sub-in{font-size:13px;color:var(--ink3);line-height:1.2;margin-top:3px}
+.f-hint{display:block;margin-top:6px;font-size:13px;color:var(--ink3);line-height:1.4}
+.select.full{width:100%;height:46px;border-radius:12px;background-color:var(--sheet);border:1px solid var(--line);padding-left:14px}
+.input.area{height:auto;padding:11px 14px;resize:vertical;line-height:1.45;font-size:14px}
+.d-actions .danger{background:var(--e-fallida-bg);color:var(--e-fallida)}
+form.d-body .check{margin:6px 0 4px}
+form.d-body .form-error{margin-top:10px}
+form.d-body .d-actions{margin-top:20px}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .login{grid-template-columns:1fr}
+  .login-art{display:none}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi:nth-child(3){padding-left:0;border-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--line);margin-top:22px}
+  .topbar .seg button{padding:0 10px}
+  .avatar-btn .nm{display:none}
+}
+@media (max-width:720px){
+  .topbar-in,.wrap{padding-left:18px;padding-right:18px}
+  .topbar-in{gap:8px;flex-wrap:wrap;height:auto;padding-top:10px;padding-bottom:10px}
+  #nav{order:5;width:100%}
+  #nav button{flex:1}
+  .topbar .brand span{display:none}
+  .funnels{margin-left:-18px;margin-right:-18px;padding-left:18px;padding-right:18px}
+  .sheet-head{padding:18px}
+  .search,.search .input{width:100%}
+  .hide-sm{display:none}
+  th,td{padding-left:18px;padding-right:18px}
+  table{min-width:0}
+  .d-body{padding:8px 22px 40px}
+  .d-name{font-size:24px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* ---- Seguimiento y ajustes ---- */
+.badge[data-s="Pendiente"]{--bg-e:var(--accent-soft);--fg-e:var(--accent)}
+.badge[data-s="Detenido"]{--bg-e:var(--e-rechazo-bg);--fg-e:var(--e-rechazo)}
+.badge[data-s="Contestó"]{--bg-e:var(--e-contesto-bg);--fg-e:var(--e-contesto)}
+.badge[data-s="Agotado"]{--bg-e:var(--e-nocontesto-bg);--fg-e:var(--e-nocontesto)}
+.badge[data-s="Cancelado"]{--bg-e:var(--e-buzon-bg);--fg-e:var(--e-buzon)}
+.r .btn-row{margin-right:6px}
+.btn-row{height:34px;padding:0 13px;border-radius:9px;background:var(--bg);font-size:13.5px;font-weight:500;color:var(--ink2);white-space:nowrap;transition:background .15s,color .15s}
+.btn-row:hover{background:var(--line2);color:var(--ink)}
+.btn-row.stop:hover{background:var(--e-rechazo-bg);color:var(--e-rechazo)}
+.btn-row.go{background:var(--accent-soft);color:var(--accent)}
+.btn-row.sure{background:var(--e-fallida-bg);color:var(--e-fallida)}
+.banner.pause{background:var(--e-nocontesto-bg);color:var(--e-nocontesto)}
+.seg-chips{margin-top:28px}
+.motivos{display:grid;gap:8px}
+.motivo{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:14.5px;background:var(--sheet)}
+.motivo:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.motivo input{accent-color:var(--accent);width:17px;height:17px}
+.aj-card{padding:24px 28px;margin-top:20px}
+.aj-card h2{font-size:21px;line-height:1.2}
+.aj-card .cfg-note{margin-top:8px}
+.aj-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.switch{display:inline-flex;align-items:center;gap:12px;cursor:pointer;font-weight:600;position:relative}
+.switch input{position:absolute;opacity:0;width:46px;height:28px;margin:0;cursor:pointer}
+.switch .sw{width:46px;height:28px;border-radius:999px;background:var(--dim);position:relative;transition:background .15s;flex:none}
+.switch .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch input:checked+.sw{background:var(--accent)}
+.switch input:checked+.sw::after{transform:translateX(18px)}
+.switch input:focus-visible+.sw{box-shadow:0 0 0 4px var(--accent-soft)}
+.ret{display:grid;grid-template-columns:90px 90px 130px 1fr auto;gap:10px;align-items:center;margin-top:10px}
+.ret .input,.ret .select.full{height:42px}
+.ret-lbl{font-weight:500;font-size:14px}
+.ret-after{color:var(--ink3);font-size:13.5px}
+.ret-first{margin-top:14px;color:var(--ink2);font-size:14px}
+.aj-sum{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-size:14px}
+.hrs{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.hrs .select.full{width:auto;min-width:110px;height:42px}
+.dias{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.dia{display:inline-flex;align-items:center;justify-content:center;min-width:54px;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:14px;font-weight:500;color:var(--ink2);background:var(--sheet);position:relative}
+.dia input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.dia:has(input:checked){background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.dia:has(input:focus-visible){box-shadow:0 0 0 4px var(--accent-soft)}
+.aj-adv summary{cursor:pointer;font-weight:500;color:var(--ink2);margin-top:22px}
+.aj-adv .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:14px}
+.aj-save{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:24px}
+@media (max-width:720px){.ret{grid-template-columns:1fr 1fr;}.ret-lbl{grid-column:1/3}.ret-after{grid-column:1/3}.aj-card{padding:20px 18px}}
+.range-row{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:-18px 0 22px}
+.range-lbl{font-size:13px;color:var(--ink3)}
+@media (max-width:720px){.range-row{justify-content:flex-start;margin:-26px 0 18px;overflow-x:auto}}
+</style>
+</head>
+<body>
+
+<!-- ============ Login ============ -->
+<section id="login" class="login">
+  <div class="login-art" aria-hidden="true">
+    <div class="art-copy">
+      <h2 class="serif">Cada llamada,<br>a la vista.</h2>
+      <p>Resultados, grabaciones y transcripciones de tus llamadas con IA, en un solo lugar.</p>
+    </div>
+    <svg id="artWave" viewBox="0 0 640 300" preserveAspectRatio="xMidYMax slice"></svg>
+  </div>
+  <div class="login-side">
+    <form id="loginForm" class="login-form" autocomplete="on">
+      <div class="brand">
+        <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--accent)"/><g fill="var(--accent-ink)"><rect x="7" y="13" width="3" height="6" rx="1.5"/><rect x="12" y="9" width="3" height="14" rx="1.5"/><rect x="17" y="6" width="3" height="20" rx="1.5"/><rect x="22" y="11" width="3" height="10" rx="1.5"/></g></svg>
+        <span>Llamadas</span>
+      </div>
+      <h1 class="serif">Qué bueno verte de nuevo</h1>
+      <p class="sub">Entra para ver cómo van tus llamadas.</p>
+
+      <label class="field"><span>Usuario</span>
+        <input class="input" id="u" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      </label>
+      <label class="field"><span>Contraseña</span>
+        <div class="pw">
+          <input class="input" id="p" name="password" type="password" autocomplete="current-password" required>
+          <button type="button" id="togglePw">Mostrar</button>
+        </div>
+      </label>
+      <label class="check"><input type="checkbox" id="remember" checked> Mantener la sesión iniciada</label>
+      <button class="btn-primary" id="loginBtn" type="submit"><span id="loginLabel">Entrar</span></button>
+      <p class="form-error" id="loginError" role="alert"></p>
+      <div class="demo-hint hidden" id="demoHint">Estás en modo demostración con datos de ejemplo. Entra con <b>demo</b> y <b>demo</b>.</div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ App ============ -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--accent)"/><g fill="var(--accent-ink)"><rect x="7" y="13" width="3" height="6" rx="1.5"/><rect x="12" y="9" width="3" height="14" rx="1.5"/><rect x="17" y="6" width="3" height="20" rx="1.5"/><rect x="22" y="11" width="3" height="10" rx="1.5"/></g></svg>
+        <span>Llamadas</span>
+      </div>
+      <div class="seg hidden" id="nav" role="group" aria-label="Sección">
+        <button data-view="llamadas" aria-pressed="true">Llamadas</button>
+        <button data-view="seguimiento" aria-pressed="false">Seguimiento</button>
+        <button data-view="ajustes" data-admin aria-pressed="false">Ajustes</button>
+        <button data-view="config" data-admin aria-pressed="false">Marcas y números</button>
+      </div>
+      <button class="icon-btn" id="refresh" aria-label="Actualizar datos" title="Actualizar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+      </button>
+      <button class="icon-btn" id="theme" aria-label="Cambiar tema" title="Cambiar tema"></button>
+      <div class="me">
+        <button class="avatar-btn" id="meBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar" id="meAvatar">U</span><span class="nm" id="meName"></span>
+        </button>
+        <div class="menu hidden" id="meMenu">
+          <div class="who"><b id="menuName"></b><span id="menuRole"></span></div>
+          <a href="usuarios.html" data-admin>Usuarios</a>
+          <button id="logout">Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="viewLlamadas">
+    <div class="range-row">
+      <span class="range-lbl">Periodo</span>
+      <div class="seg" id="range" role="group" aria-label="Periodo">
+        <button data-range="hoy" aria-pressed="false">Hoy</button>
+        <button data-range="7" aria-pressed="false">7 días</button>
+        <button data-range="30" aria-pressed="true">30 días</button>
+        <button data-range="todo" aria-pressed="false">Todo</button>
+      </div>
+    </div>
+    <section>
+      <h1 class="greet" id="greet"></h1>
+      <p class="lede" id="lede"></p>
+    </section>
+
+    <section class="wave-block">
+      <div class="legend"><span><i style="background:var(--accent)"></i>Contestadas</span><span><i style="background:var(--dim)"></i>Sin respuesta</span></div>
+      <div class="wave" id="wave"></div>
+      <div class="axis" id="axis"></div>
+      <div class="tip" id="tip"></div>
+    </section>
+
+    <section class="kpis" id="kpis"></section>
+
+    <div id="errorBanner"></div>
+
+    <nav class="funnels" id="funnels" aria-label="Filtrar por funnel"></nav>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <h2 class="serif">Llamadas<small id="count"></small></h2>
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="input" id="q" type="search" placeholder="Buscar por nombre, teléfono o programa" aria-label="Buscar llamadas">
+        </div>
+        <select class="select" id="estado" aria-label="Filtrar por estado">
+          <option value="all">Todos los estados</option>
+          <option>Contestó</option><option>No contestó</option><option>Buzón de voz</option>
+          <option>Ocupado</option><option>Rechazó</option><option>Fallida</option>
+        </select>
+        <select class="select" id="dir" aria-label="Filtrar por tipo de llamada">
+          <option value="all">Entrantes y salientes</option>
+          <option value="Saliente">Salientes</option>
+          <option value="Entrante">Entrantes</option>
+        </select>
+        <button class="btn-ghost" id="export">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Exportar CSV
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Contacto</th><th>Funnel</th><th class="hide-sm">Programa</th><th>Estado</th><th class="hide-sm r">Duración</th><th class="r">Fecha</th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div id="stateBox"></div>
+      <div class="more hidden" id="moreBox"><button class="btn-ghost" id="more">Ver más llamadas</button></div>
+    </section>
+  </main>
+
+  <main class="wrap hidden" id="viewSeguimiento">
+    <section>
+      <h1 class="greet">Seguimiento</h1>
+      <p class="lede">Los leads que el sistema está llamando o va a volver a llamar, uno por cada deal de Bitrix. Si alguien pide que no lo llamen o ya lo atiende un asesor, detén su seguimiento aquí: solo se detiene ese lead en esa marca.</p>
+    </section>
+    <div id="segBanner"></div>
+    <nav class="funnels seg-chips" id="segChips" aria-label="Filtrar por estado"></nav>
+    <section class="sheet">
+      <div class="sheet-head">
+        <h2 class="serif">Leads<small id="segCount"></small></h2>
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="input" id="segQ" type="search" placeholder="Buscar lead o deal" aria-label="Buscar en el seguimiento">
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Contacto</th><th>Marca</th><th class="hide-sm">Programa</th><th class="hide-sm">Llamadas</th><th>Próxima llamada</th><th>Estado</th><th class="r"><span class="sr">Acción</span></th></tr></thead>
+          <tbody id="segRows"></tbody>
+        </table>
+      </div>
+      <div id="segState"></div>
+    </section>
+  </main>
+
+  <main class="wrap hidden" id="viewAjustes">
+    <section>
+      <h1 class="greet">Ajustes de llamadas</h1>
+      <p class="lede">Cuándo se vuelve a llamar, en qué horario y cómo pausar todo. Los cambios se aplican en la siguiente pasada del marcador, sin tocar código ni n8n.</p>
+    </section>
+    <div id="ajBanner"></div>
+    <div id="ajBody"></div>
+  </main>
+
+  <main class="wrap hidden" id="viewConfig">
+    <section>
+      <h1 class="greet">Marcas y números</h1>
+      <p class="lede">Aquí defines qué número y qué agente de Retell usa cada funnel, y si cada número recibe llamadas, las hace o ambas cosas. n8n lee esta configuración cada vez que va a llamar.</p>
+    </section>
+    <div id="cfgBanner"></div>
+
+    <section class="sheet cfg-sheet">
+      <div class="sheet-head">
+        <h2 class="serif">Números<small id="cntNum"></small></h2>
+        <button class="btn-add" id="addNum">Agregar número</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Número</th><th>Marca</th><th>Uso</th><th class="hide-sm">Agente de Retell</th><th class="hide-sm">Estado</th><th class="r"><span class="sr">Editar</span></th></tr></thead>
+          <tbody id="numRows"></tbody>
+        </table>
+      </div>
+      <div id="numState"></div>
+    </section>
+
+    <section class="sheet cfg-sheet">
+      <div class="sheet-head">
+        <h2 class="serif">Funnels<small id="cntFun"></small></h2>
+        <button class="btn-add" id="addFun">Agregar funnel</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Código en Bitrix</th><th>Funnel</th><th class="hide-sm">Marca</th><th>Llama desde</th><th class="r"><span class="sr">Editar</span></th></tr></thead>
+          <tbody id="funRows"></tbody>
+        </table>
+      </div>
+      <div id="funState"></div>
+    </section>
+  </main>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Detalle de la llamada" aria-hidden="true"></aside>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<noscript><p style="padding:24px">Este panel necesita JavaScript para funcionar.</p></noscript>
+
+<script>
+(() => {
+'use strict';
+
+/* ================== Configuración ================== */
+const CONFIG = {
+  API_URL: 'https://script.google.com/macros/s/AKfycbzgLmKB5N5aak1bs5x0_ut7h85Vhmqv4-CJin7LWaZrp_Sn1es9Xjq8IZc1w0H-U7vpWA/exec'
+};
+const DEMO = !CONFIG.API_URL;
+
+// Los funnels (código de Bitrix -> nombre) vienen de la hoja "Funnels"; aquí solo se les da color.
+let FUNNELS = {};
+const PALETTE = ['#4C7DF0','#3BA7C9','#4FB98B','#D4A83A','#E58B5A','#C45B8C','#8B7CF6','#E0697A','#5F8F6B','#8A93A6'];
+const FALLBACK_COLOR = '#9AA3B5';
+function colorFor(key) {
+  const t = String(key || '');
+  let h = 0;
+  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+  return PALETTE[h % PALETTE.length];
+}
+
+/* ================== Utilidades ================== */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const safeUrl = u => /^https?:\/\//i.test(String(u || '')) ? String(u) : '';
+const startOfDay = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+
+function mmss(sec) {
+  sec = Math.max(0, Math.round(Number(sec) || 0));
+  return Math.floor(sec / 60) + ':' + pad(sec % 60);
+}
+function money(n) { return '$' + (Number(n) || 0).toFixed(2); }
+function initials(name) {
+  const p = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!p.length) return '#';
+  return (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase();
+}
+function estadoKey(e) {
+  return ({ 'Contestó':'contesto', 'No contestó':'nocontesto', 'Buzón de voz':'buzon', 'Ocupado':'ocupado', 'Rechazó':'rechazo', 'Fallida':'fallida' })[e] || 'buzon';
+}
+function badge(e) { return `<span class="badge" data-e="${estadoKey(e)}">${esc(e || 'Sin estado')}</span>`; }
+function funnelOf(r) {
+  const id = String(r.category_id || '');
+  const f = FUNNELS[id];
+  if (f) return { id, name: f.name, color: f.color };
+  if (id) return { id, name: r.funnel || 'Funnel ' + id, color: colorFor(id) };
+  if (r.marca) return { id: 'm:' + r.marca, name: r.marca, color: colorFor(r.marca) };
+  return { id: '', name: 'Sin funnel', color: FALLBACK_COLOR };
+}
+function funnelLabel(id) {
+  if (FUNNELS[id]) return FUNNELS[id].name;
+  if (String(id).startsWith('m:')) return String(id).slice(2);
+  return id ? 'Funnel ' + id : 'Sin funnel';
+}
+function fmtWhen(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts), now = new Date();
+  const hm = pad(d.getHours()) + ':' + pad(d.getMinutes());
+  const dayDiff = Math.round((startOfDay(now) - startOfDay(d)) / 864e5);
+  if (dayDiff === 0) return 'Hoy ' + hm;
+  if (dayDiff === 1) return 'Ayer ' + hm;
+  const y = d.getFullYear() !== now.getFullYear() ? ' ' + d.getFullYear() : '';
+  return `${d.getDate()} ${MESES[d.getMonth()]}${y}, ${hm}`;
+}
+function fmtLong(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const f = d.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' });
+  return f.charAt(0).toUpperCase() + f.slice(1) + ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+const MOTIVOS = {
+  user_hangup: 'El cliente colgó', agent_hangup: 'El agente colgó', dial_no_answer: 'Sin respuesta',
+  dial_busy: 'Línea ocupada', dial_failed: 'No se pudo marcar', voicemail_reached: 'Llegó a buzón de voz',
+  user_declined: 'El cliente rechazó la llamada', call_transfer: 'Llamada transferida', inactivity: 'Por inactividad',
+  max_duration_reached: 'Alcanzó la duración máxima', invalid_destination: 'Número no válido'
+};
+const SENT = { Positive: 'Positivo', Neutral: 'Neutral', Negative: 'Negativo', Unknown: 'Sin determinar' };
+
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ================== Estado ================== */
+const SESSION_KEY = 'llamadas_sesion';
+const state = {
+  token: null, user: null,
+  rows: [], loaded: false, loading: false,
+  range: localStorage.getItem('llamadas_rango') || '30',
+  funnel: 'all', estado: 'all', dir: 'all', q: '', visible: 25,
+  view: 'llamadas', cfg: { admin: false, numeros: [], funnels: [] }, cfgError: false,
+  seg: [], segLoaded: false, segError: false, segMeta: { pausa: false, max: 4 }, segEstado: 'all', segQ: '',
+  aj: null, ajDraft: null, ajError: false,
+  detail: {}, animateWave: true, lastFocus: null
+};
+
+/* ================== API ================== */
+async function api(action, payload = {}) {
+  if (DEMO) return demoApi(action, payload);
+  const res = await fetch(CONFIG.API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action, token: state.token, ...payload })
+  });
+  const data = await res.json();
+  if (data && data.error === 'sesion_expirada' && action !== 'login') {
+    logout('Tu sesión venció. Vuelve a entrar para continuar.');
+  }
+  return data;
+}
+
+/* ================== Modo demostración ================== */
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const DEMO_NUMEROS_SEED = [
+  { numero: '+18632703320', marca: 'BGU', uso: 'Ambos', agente_id: 'agent_cbf593baed98cc76e56cd38196', variables: '', activo: 'Sí' },
+  { numero: '+18632778246', marca: 'ITAE', uso: 'Ambos', agente_id: '', variables: '', activo: 'Sí' },
+  { numero: '+18632097504', marca: 'IEMPRESA', uso: 'Ambos', agente_id: '', variables: '', activo: 'Sí' },
+  { numero: '+18632708871', marca: 'BGU Soporte', uso: 'Entrante', agente_id: '', variables: '', activo: 'Sí' },
+  { numero: '+18634567532', marca: 'Neumann Soporte', uso: 'Entrante', agente_id: '', variables: '', activo: 'Sí' }
+];
+const DEMO_FUNNELS_SEED = [
+  { category_id: '127', funnel: 'Upgrade',   marca: 'BGU',      numero_salida: '+18632703320' },
+  { category_id: '228', funnel: 'Doctorado', marca: 'BGU',      numero_salida: '+18632703320' },
+  { category_id: '147', funnel: 'Master',    marca: 'BGU',      numero_salida: '+18632703320' },
+  { category_id: '115', funnel: 'DCE',       marca: 'BGU',      numero_salida: '+18632703320' },
+  { category_id: '252', funnel: 'ITAE',      marca: 'ITAE',     numero_salida: '+18632778246' },
+  { category_id: '25',  funnel: 'JVN',       marca: 'Neumann',  numero_salida: '' },
+  { category_id: '33',  funnel: 'IEMPRESA',  marca: 'IEMPRESA', numero_salida: '+18632097504' }
+];
+const demoCfg = { numeros: DEMO_NUMEROS_SEED.map(x => ({ ...x })), funnels: DEMO_FUNNELS_SEED.map(x => ({ ...x })) };
+const demoFunnel = cat => DEMO_FUNNELS_SEED.find(f => f.category_id === cat) || { funnel: '', marca: '' };
+function demoNorm(v) {
+  let d = String(v || '').replace(/\D/g, '');
+  if (d.startsWith('00')) d = d.slice(2);
+  return d.length >= 8 && d.length <= 15 ? '+' + d : '';
+}
+let demoCache = null;
+function demoData() {
+  if (demoCache) return demoCache;
+  const rnd = mulberry32(20261023);
+  const pick = a => a[Math.floor(rnd() * a.length)];
+  const nombres = ['Camila','Lucía','Mateo','Sofía','Diego','Valeria','Andrés','Paola','Javier','Daniela','Renato','Fiorella','Gabriel','Mariana','Sebastián','Carolina','Álvaro','Natalia','Rodrigo','Andrea'];
+  const apellidos = ['Rojas','Quispe','Fernández','Salazar','Mendoza','Torres','Vargas','Castillo','Herrera','Paredes','Ramírez','Chávez','Delgado','Flores','Ortiz','Cárdenas'];
+  const progs = {
+    '127': ['Licenciatura en Administración','Licenciatura en Psicología','Licenciatura en Educación'],
+    '147': ['Maestría en Ciberseguridad','Maestría en Gestión Pública','Maestría en Educación'],
+    '228': ['Doctorado en Administración de empresas'],
+    '208': ['Programa de investigación','Búsqueda de maestrías'],
+    '260': ['Maestría en Dirección de Proyectos','Maestría en Finanzas'],
+    '115': ['Diplomado en Gestión','Certificación profesional'],
+    '252': ['Técnico en Marketing digital','Técnico en Enfermería'],
+    '25':  ['Inglés intensivo','Curso de oratoria'],
+    '33':  ['Programa ejecutivo','Diplomado en Liderazgo']
+  };
+  const prefijos = ['+51','+51','+51','+51','+51','+52','+57','+593','+56'];
+  const estados = [['Contestó',46],['No contestó',28],['Buzón de voz',12],['Ocupado',5],['Rechazó',4],['Fallida',5]];
+  const pesos = estados.reduce((s, e) => s + e[1], 0);
+  const cats = ['127','228','147','115','252','33'];
+  const pesoCat = { '147':5,'127':5,'228':2,'208':2,'260':2,'115':1,'252':2,'25':1,'33':1 };
+  const bolsa = cats.flatMap(c => Array(pesoCat[c] || 1).fill(c));
+  const resumenes = [
+    'El cliente confirmó interés en el programa y pidió recibir la ficha de inscripción por WhatsApp.',
+    'Mostró interés, pero prefiere decidir la próxima semana. Se acordó una llamada de seguimiento.',
+    'Consultó por el costo y las facilidades de pago. Quedó en revisar la información con su familia.',
+    'Cumple con el requisito de elegibilidad y solicitó hablar con un asesor humano.',
+    'Indicó que ya estudia en otra institución y no desea continuar el proceso.'
+  ];
+  const dialogos = [
+    ['Hola {n}, te llamo de Blackwell Global University. ¿Es un buen momento para hablar un par de minutos?','Sí, dime.','Perfecto. Vi que te interesaste por {p}. Antes de darte los detalles, te haré dos preguntas rápidas para confirmar que puedes aplicar. ¿Cuentas con título universitario?','Sí, soy bachiller y tengo el título.','Excelente. ¿Y actualmente trabajas o ejerces en el área?','Sí, trabajo en el sector hace cinco años.','Muy bien, calificas para el programa. ¿Te envío la ficha de inscripción por WhatsApp?','Sí, por favor.'],
+    ['Buenas tardes {n}, ¿hablo con la persona que consultó por {p}?','Sí, soy yo.','Gracias por contestar. Quisiera confirmar si todavía te interesa recibir información.','Un poco, pero ahora estoy ocupado.','Sin problema. ¿Te parece si te llamo mañana por la tarde?','Mejor el jueves.','Anotado, te llamo el jueves. Gracias por tu tiempo.']
+  ];
+  const out = [];
+  const ahora = Date.now();
+  for (let i = 0; i < 150; i++) {
+    const back = Math.floor(Math.pow(rnd(), 1.5) * 30);
+    const d = addDays(new Date(), -back);
+    d.setHours(9 + Math.floor(rnd() * 11), Math.floor(rnd() * 60), Math.floor(rnd() * 60), 0);
+    if (d.getTime() > ahora) d.setTime(ahora - Math.floor(rnd() * 3 * 3600e3));
+    let x = rnd() * pesos, estado = 'Contestó';
+    for (const [e, w] of estados) { if (x < w) { estado = e; break; } x -= w; }
+    const cat = pick(bolsa);
+    const nombre = pick(nombres) + ' ' + pick(apellidos);
+    const programa = pick(progs[cat] || ['Programa académico']);
+    let dur = 0;
+    if (estado === 'Contestó') dur = 45 + Math.floor(rnd() * 380);
+    else if (estado === 'Buzón de voz') dur = 14 + Math.floor(rnd() * 25);
+    else if (estado === 'Rechazó') dur = 3 + Math.floor(rnd() * 8);
+    const tel = pick(prefijos) + (900000000 + Math.floor(rnd() * 99999999));
+    const motivo = ({ 'Contestó': pick(['user_hangup','agent_hangup','user_hangup']), 'No contestó':'dial_no_answer', 'Buzón de voz':'voicemail_reached', 'Ocupado':'dial_busy', 'Rechazó':'user_declined', 'Fallida':'dial_failed' })[estado];
+    const ok = estado === 'Contestó';
+    const dial = pick(dialogos);
+    const transcript = ok ? dial.map((t, k) => (k % 2 ? 'User: ' : 'Agent: ') + t.replace('{n}', nombre.split(' ')[0]).replace('{p}', programa)).join('\n') : '';
+    const dealId = String(1230000 + Math.floor(rnd() * 9000));
+    out.push({
+      call_id: 'demo_' + i, fecha_inicio: d.toISOString(), fecha_fin: new Date(d.getTime() + dur * 1000).toISOString(),
+      duracion_seg: dur, estado, motivo_desconexion: motivo, deal_id: dealId, contact_id: String(1680000 + i),
+      category_id: cat, funnel: demoFunnel(cat).funnel, marca: demoFunnel(cat).marca, direccion: 'Saliente', nombre, telefono: tel, programa,
+      sentimiento: ok ? pick(['Positive','Positive','Neutral','Negative']) : '',
+      exitosa: ok ? (rnd() > .45 ? 'Sí' : 'No') : '',
+      grabacion_url: '', bitrix_url: 'https://baltic.bitrix24.es/crm/deal/details/' + dealId + '/',
+      costo_usd: (dur / 60 * 0.215).toFixed(2), actualizado: d.toISOString(),
+      resumen: ok ? pick(resumenes) : '', transcript
+    });
+  }
+  for (let i = 0; i < 14; i++) {
+    const back = Math.floor(Math.pow(rnd(), 1.5) * 30);
+    const d = addDays(new Date(), -back);
+    d.setHours(9 + Math.floor(rnd() * 11), Math.floor(rnd() * 60), Math.floor(rnd() * 60), 0);
+    if (d.getTime() > ahora) d.setTime(ahora - Math.floor(rnd() * 3 * 3600e3));
+    const dur = 30 + Math.floor(rnd() * 240);
+    const nombre = rnd() > .45 ? pick(nombres) + ' ' + pick(apellidos) : '';
+    out.push({
+      call_id: 'demo_in_' + i, fecha_inicio: d.toISOString(), fecha_fin: new Date(d.getTime() + dur * 1000).toISOString(),
+      duracion_seg: dur, estado: 'Contestó', motivo_desconexion: 'user_hangup', deal_id: '', contact_id: '',
+      category_id: '', funnel: '', marca: pick(['BGU Soporte','BGU Soporte','Neumann Soporte']), direccion: 'Entrante',
+      nombre, telefono: pick(prefijos) + (900000000 + Math.floor(rnd() * 99999999)), programa: '',
+      sentimiento: pick(['Positive','Neutral','Neutral']), exitosa: pick(['Sí','No']),
+      grabacion_url: '', bitrix_url: '', costo_usd: (dur / 60 * 0.215).toFixed(2), actualizado: d.toISOString(),
+      resumen: 'Consulta recibida por la línea de soporte.',
+      transcript: 'Agent: Hola, te comunicas con soporte. ¿En qué puedo ayudarte?\nUser: Quisiera saber el estado de mi trámite.\nAgent: Con gusto. ¿Me confirmas tu nombre completo?'
+    });
+  }
+  out.sort((a, b) => b.fecha_inicio.localeCompare(a.fecha_inicio));
+  demoCache = out;
+  return out;
+}
+async function demoApi(action, p) {
+  await new Promise(r => setTimeout(r, 380));
+  if (action === 'login') {
+    if (String(p.usuario).trim().toLowerCase() === 'demo' && p.password === 'demo') {
+      return { ok: true, token: 'demo-token', usuario: { usuario: 'demo', nombre: 'Sharon', rol: 'admin' }, expira: Date.now() + 6 * 3600e3 };
+    }
+    return { ok: false, error: 'credenciales' };
+  }
+  if (action === 'listar') {
+    return { ok: true, llamadas: demoData().map(r => { const c = { ...r }; delete c.resumen; delete c.transcript; return c; }) };
+  }
+  if (action === 'detalle') {
+    const r = demoData().find(x => x.call_id === p.call_id);
+    return r ? { ok: true, llamada: r } : { ok: false, error: 'no_encontrada' };
+  }
+  if (action === 'config_listar') {
+    return { ok: true, admin: true, numeros: demoCfg.numeros.map(x => ({ ...x })), funnels: demoCfg.funnels.map(x => ({ ...x })) };
+  }
+  if (action === 'config_guardar') {
+    const reg = p.registro || {};
+    if (p.tabla === 'numeros') {
+      const numero = demoNorm(reg.numero);
+      if (!numero) return { ok: false, error: 'numero_invalido' };
+      if (!String(reg.marca || '').trim()) return { ok: false, error: 'falta_marca' };
+      if (!['Entrante','Saliente','Ambos'].includes(reg.uso)) return { ok: false, error: 'uso_invalido' };
+      const orig = p.original ? demoNorm(p.original) : '';
+      if (demoCfg.numeros.some(n => n.numero === numero && n.numero !== orig)) return { ok: false, error: 'duplicado' };
+      const usados = demoCfg.funnels.filter(f => f.numero_salida === (orig || numero));
+      if (reg.uso === 'Entrante' && usados.length) return { ok: false, error: 'en_uso_saliente', funnels: usados.map(f => f.funnel) };
+      const nuevo = { numero, marca: String(reg.marca).trim(), uso: reg.uso, agente_id: String(reg.agente_id || '').trim(), variables: String(reg.variables || '').trim(), activo: reg.activo === 'No' ? 'No' : 'Sí' };
+      const k = demoCfg.numeros.findIndex(n => n.numero === orig);
+      if (k >= 0) demoCfg.numeros[k] = nuevo; else demoCfg.numeros.push(nuevo);
+      if (orig && orig !== numero) demoCfg.funnels.forEach(f => { if (f.numero_salida === orig) f.numero_salida = numero; });
+      return { ok: true };
+    }
+    const id = String(reg.category_id || '').replace(/\D/g, '');
+    if (!id) return { ok: false, error: 'codigo_invalido' };
+    if (!String(reg.funnel || '').trim()) return { ok: false, error: 'falta_nombre' };
+    let num = '';
+    if (reg.numero_salida) {
+      num = demoNorm(reg.numero_salida);
+      const n = demoCfg.numeros.find(x => x.numero === num);
+      if (!n) return { ok: false, error: 'numero_no_existe' };
+      if (n.uso === 'Entrante') return { ok: false, error: 'numero_solo_entrante' };
+    }
+    const orig = p.original ? String(p.original).replace(/\D/g, '') : '';
+    if (demoCfg.funnels.some(f => f.category_id === id && f.category_id !== orig)) return { ok: false, error: 'duplicado' };
+    const nuevo = { category_id: id, funnel: String(reg.funnel).trim(), marca: String(reg.marca || '').trim(), numero_salida: num };
+    const k = demoCfg.funnels.findIndex(f => f.category_id === orig);
+    if (k >= 0) demoCfg.funnels[k] = nuevo; else demoCfg.funnels.push(nuevo);
+    return { ok: true };
+  }
+  if (action === 'config_borrar') {
+    if (p.tabla === 'numeros') {
+      const n = demoNorm(p.clave);
+      const usados = demoCfg.funnels.filter(f => f.numero_salida === n);
+      if (usados.length) return { ok: false, error: 'en_uso', funnels: usados.map(f => f.funnel) };
+      demoCfg.numeros = demoCfg.numeros.filter(x => x.numero !== n);
+    } else {
+      demoCfg.funnels = demoCfg.funnels.filter(f => f.category_id !== String(p.clave));
+    }
+    return { ok: true };
+  }
+  if (action === 'seg_listar') {
+    return { ok: true, seguimiento: demoSegData().map(r => ({ ...r })), pausa: demoAj.pausa, max_intentos: demoAj.reintentos_min.length + 1 };
+  }
+  if (action === 'seg_detener') {
+    const r = demoSegData().find(x => x.deal_id === String(p.deal_id));
+    if (!r) return { ok: false, error: 'no_encontrada' };
+    if (!String(p.motivo || '').trim()) return { ok: false, error: 'falta_motivo' };
+    if (r.estado !== 'Pendiente') return { ok: false, error: 'no_se_puede' };
+    Object.assign(r, { estado: 'Detenido', proximo_intento: '', ultimo_resultado: 'Detenido: ' + p.motivo, detenido_por: 'demo', detenido_motivo: p.motivo, actualizado: new Date().toISOString() });
+    return { ok: true, bloqueado: !!p.bloquear };
+  }
+  if (action === 'seg_reanudar') {
+    const r = demoSegData().find(x => x.deal_id === String(p.deal_id));
+    if (!r) return { ok: false, error: 'no_encontrada' };
+    const era = r.estado === 'Detenido';
+    if (!era) { r.intento = '0'; r.primera_llamada = ''; }
+    Object.assign(r, { estado: 'Pendiente', proximo_intento: new Date().toISOString(), ultimo_resultado: era ? 'Reanudado' : 'Vuelve a empezar', detenido_por: '', detenido_motivo: '', actualizado: new Date().toISOString() });
+    return { ok: true, accion: era ? 'reanudado' : 'reiniciado' };
+  }
+  if (action === 'ajustes_listar') return { ok: true, admin: true, ajustes: { ...demoAj, reintentos_min: demoAj.reintentos_min.slice(), dias_sin_llamadas: demoAj.dias_sin_llamadas.slice() } };
+  if (action === 'ajustes_guardar') {
+    const a = p.ajustes || {};
+    const r = a.reintentos_min;
+    if (!Array.isArray(r) || r.length > 6 || r.some((x, i) => !Number.isInteger(x) || x < 1 || (i && x <= r[i - 1]))) return { ok: false, error: 'reintentos_invalidos' };
+    if (!(a.hora_desde >= 0 && a.hora_desde <= 23 && a.hora_hasta >= 1 && a.hora_hasta <= 24 && a.hora_hasta > a.hora_desde)) return { ok: false, error: 'horario_invalido' };
+    if (!Array.isArray(a.dias_sin_llamadas) || a.dias_sin_llamadas.length >= 7) return { ok: false, error: 'dias_invalidos' };
+    if (!(a.tomar_max >= 1 && a.tomar_max <= 20)) return { ok: false, error: 'limite_invalido' };
+    Object.assign(demoAj, a);
+    return { ok: true, ajustes: { ...demoAj, reintentos_min: demoAj.reintentos_min.slice(), dias_sin_llamadas: demoAj.dias_sin_llamadas.slice() } };
+  }
+  return { ok: false, error: 'accion_invalida' };
+}
+const demoAj = { pausa: false, reintentos_min: [30, 1440, 2880], hora_desde: 7, hora_hasta: 22, dias_sin_llamadas: [], tomar_max: 10, min_contestada_seg: 20, reencolar_tras_min: 10 };
+let demoSegCache = null;
+function demoSegData() {
+  if (demoSegCache) return demoSegCache;
+  const iso = h => new Date(Date.now() + h * 3600e3).toISOString();
+  const mk = (deal, cat, nombre, tel, prog, intento, estado, ult, extra) => ({
+    deal_id: deal, contact_id: '', category_id: cat, funnel: demoFunnel(cat).funnel, marca: demoFunnel(cat).marca, nombre, telefono: tel, programa: prog,
+    intento: String(intento), primera_llamada: intento ? iso(-3) : '', proximo_intento: '', estado, ultimo_resultado: ult, ultima_llamada_id: '',
+    actualizado: iso(-1), detenido_por: '', detenido_motivo: '', ...extra
+  });
+  demoSegCache = [
+    mk('1233246', '147', 'Sharon Bedoya', '+51910852228', 'Maestría de Ciberseguridad', 2, 'Pendiente', 'Buzón de voz', { proximo_intento: iso(21) }),
+    mk('1233301', '147', 'Camila Rojas', '+51987001122', 'Maestría en Gestión Pública', 0, 'Pendiente', 'En cola', { proximo_intento: iso(-0.01) }),
+    mk('1233377', '127', 'Mateo Quispe', '+51987003344', 'Licenciatura en Administración', 1, 'Pendiente', 'No contestó', { proximo_intento: iso(0.4) }),
+    mk('1233402', '252', 'Lucía Fernández', '+51987005566', 'Técnico en Enfermería', 3, 'Pendiente', 'Colgó al inicio', { proximo_intento: iso(30) }),
+    mk('1233450', '228', 'Diego Salazar', '+51987007788', 'Doctorado en Administración de empresas', 1, 'Detenido', 'Detenido: Pidió que no lo llamen', { detenido_por: 'demo', detenido_motivo: 'Pidió que no lo llamen' }),
+    mk('1233498', '147', 'Valeria Mendoza', '+51987009900', 'Maestría en Educación', 1, 'Contestó', 'Contestó', {}),
+    mk('1233511', '127', 'Andrés Torres', '+51987001133', 'Licenciatura en Psicología', 4, 'Agotado', 'Buzón de voz', {}),
+    mk('1233520', '33', 'Paola Vargas', '+51987002244', 'Programa de liderazgo', 0, 'Cancelado', 'El funnel 33 no tiene número o agente configurado', {})
+  ];
+  return demoSegCache;
+}
+
+/* ================== Sesión ================== */
+function saveSession(r, remember) {
+  state.token = r.token;
+  state.user = r.usuario;
+  const data = JSON.stringify({ token: r.token, usuario: r.usuario, expira: r.expira });
+  (remember ? localStorage : sessionStorage).setItem(SESSION_KEY, data);
+  (remember ? sessionStorage : localStorage).removeItem(SESSION_KEY);
+}
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    if (!s.token || (s.expira && s.expira < Date.now())) return false;
+    state.token = s.token; state.user = s.usuario;
+    return true;
+  } catch (e) { return false; }
+}
+function logout(msg) {
+  localStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
+  state.token = null; state.user = null; state.rows = []; state.loaded = false; state.detail = {};
+  state.cfg = { admin: false, numeros: [], funnels: [] }; state.cfgError = false; state.view = 'llamadas'; FUNNELS = {};
+  state.seg = []; state.segLoaded = false; state.segEstado = 'all'; state.segQ = ''; state.aj = null; state.ajDraft = null;
+  state.funnel = 'all'; state.estado = 'all'; state.dir = 'all'; state.q = '';
+  closeDrawer();
+  $('#app').classList.add('hidden');
+  $('#login').classList.remove('hidden');
+  $('#p').value = '';
+  $('#loginError').textContent = msg || '';
+  $('#u').focus();
+}
+
+/* ================== Tema ================== */
+const ICON_SUN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const ICON_MOON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $('#theme').innerHTML = t === 'dark' ? ICON_SUN : ICON_MOON;
+  localStorage.setItem('llamadas_tema', t);
+}
+applyTheme(localStorage.getItem('llamadas_tema') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+$('#theme').addEventListener('click', () => {
+  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  if (state.loaded) renderWave(false);
+});
+
+/* ================== Arte del login ================== */
+function drawArt() {
+  const svg = $('#artWave');
+  const n = 56, w = 7, gap = 4.4, mid = 215;
+  let h = '';
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    const a = Math.sin(t * Math.PI * 2.2 + .6) * .5 + .5;
+    const b = Math.sin(t * Math.PI * 5.1 + 1.3) * .5 + .5;
+    const env = Math.sin(t * Math.PI);
+    const up = 14 + (a * .65 + b * .35) * 150 * (.35 + env * .65);
+    const dn = 8 + (b * .6 + a * .4) * 70 * (.35 + env * .65);
+    const x = 8 + i * (w + gap);
+    const op = (.35 + env * .65).toFixed(2);
+    h += `<rect class="art-bar" x="${x}" y="${mid - 3 - up}" width="${w}" height="${up}" rx="${w / 2}" fill="#8E88FF" opacity="${op}" style="transform-box:fill-box;transform-origin:50% 100%;animation:rise 1s cubic-bezier(.2,.8,.2,1) both;animation-delay:${i * 18}ms"/>`;
+    h += `<rect x="${x}" y="${mid + 3}" width="${w}" height="${dn}" rx="${w / 2}" fill="#3A4170" opacity="${op}" style="transform-box:fill-box;transform-origin:50% 0;animation:rise 1s cubic-bezier(.2,.8,.2,1) both;animation-delay:${i * 18 + 80}ms"/>`;
+  }
+  svg.innerHTML = h;
+}
+drawArt();
+
+/* ================== Login ================== */
+$('#demoHint').classList.toggle('hidden', !DEMO);
+$('#togglePw').addEventListener('click', () => {
+  const p = $('#p'), show = p.type === 'password';
+  p.type = show ? 'text' : 'password';
+  $('#togglePw').textContent = show ? 'Ocultar' : 'Mostrar';
+});
+function setLoginBusy(b) {
+  $('#loginBtn').disabled = b;
+  $('#loginLabel').textContent = b ? 'Entrando' : 'Entrar';
+  $('#loginBtn').classList.toggle('busy', b);
+  const old = $('#loginBtn .spin');
+  if (b && !old) $('#loginBtn').insertAdjacentHTML('afterbegin', '<span class="spin" aria-hidden="true"></span>');
+  if (!b && old) old.remove();
+}
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = $('#loginError');
+  err.textContent = '';
+  setLoginBusy(true);
+  try {
+    const r = await api('login', { usuario: $('#u').value, password: $('#p').value });
+    if (!r || !r.ok) {
+      err.textContent = r && r.error === 'bloqueado'
+        ? 'Demasiados intentos. Espera 10 minutos e inténtalo de nuevo.'
+        : (r && r.error === 'credenciales' || r && r.error === 'faltan_datos'
+            ? 'Usuario o contraseña incorrectos. Revisa los datos e inténtalo de nuevo.'
+            : 'No pudimos iniciar sesión. Inténtalo otra vez en un momento.');
+      return;
+    }
+    saveSession(r, $('#remember').checked);
+    start();
+  } catch (ex) {
+    err.textContent = 'No pudimos conectar con el servidor. Revisa tu conexión e inténtalo otra vez.';
+  } finally { setLoginBusy(false); }
+});
+
+/* ================== Arranque del panel ================== */
+function start() {
+  $('#login').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  const nom = (state.user && state.user.nombre) || 'Usuario';
+  $('#meAvatar').textContent = initials(nom);
+  $('#meName').textContent = nom.split(' ')[0];
+  $('#menuName').textContent = nom;
+  $('#menuRole').textContent = (state.user && state.user.rol === 'admin') ? 'Administrador' : 'Usuario';
+  $$('#range button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.range === state.range)));
+  state.animateWave = true;
+  const esAdmin = !!(state.user && state.user.rol === 'admin');
+  $('#nav').classList.remove('hidden');
+  $$('#nav [data-admin], #meMenu [data-admin]').forEach(b => b.classList.toggle('hidden', !esAdmin));
+  setView('llamadas');
+  renderAll();
+  loadConfig();
+  loadData(false);
+}
+
+async function loadData(silent) {
+  if (state.loading) return;
+  state.loading = true;
+  $('#refresh').classList.add('spinning');
+  try {
+    const r = await api('listar');
+    if (!r || !r.ok) throw new Error((r && r.error) || 'error');
+    state.rows = (r.llamadas || []).map(x => ({
+      ...x,
+      ts: Date.parse(x.fecha_inicio) || 0,
+      dur: Number(x.duracion_seg) || 0,
+      costo: Number(x.costo_usd) || 0
+    }));
+    state.loaded = true;
+    $('#errorBanner').innerHTML = '';
+    renderAll();
+    if (!state.deepLinkDone) {
+      state.deepLinkDone = true;
+      const id = new URLSearchParams(location.search).get('call');
+      if (id) openDrawer(id);
+    }
+    if (!silent && !DEMO) toast('Datos actualizados');
+  } catch (ex) {
+    if (!silent || !state.loaded) {
+      $('#errorBanner').innerHTML = `<div class="banner" role="alert">No pudimos cargar las llamadas. Revisa tu conexión e inténtalo otra vez. <button id="retry">Reintentar</button></div>`;
+      $('#retry').addEventListener('click', () => loadData(false));
+    }
+  } finally {
+    state.loading = false;
+    $('#refresh').classList.remove('spinning');
+  }
+}
+
+/* ================== Datos derivados ================== */
+function rangeStart() {
+  const now = new Date();
+  if (state.range === 'hoy') return startOfDay(now).getTime();
+  if (state.range === '7') return startOfDay(addDays(now, -6)).getTime();
+  if (state.range === '30') return startOfDay(addDays(now, -29)).getTime();
+  return 0;
+}
+const inRangeRows = () => { const s = rangeStart(); return state.rows.filter(r => r.ts >= s); };
+const scopeRows = () => inRangeRows().filter(r => state.funnel === 'all' || funnelOf(r).id === state.funnel);
+function tableRows() {
+  const q = state.q.trim().toLowerCase();
+  return scopeRows().filter(r => {
+    if (state.estado !== 'all' && r.estado !== state.estado) return false;
+    if (state.dir !== 'all' && (r.direccion || 'Saliente') !== state.dir) return false;
+    if (!q) return true;
+    return [r.nombre, r.telefono, r.programa, r.deal_id, r.marca, funnelOf(r).name].join(' ').toLowerCase().includes(q);
+  });
+}
+
+/* ================== Render ================== */
+function renderAll() {
+  renderGreeting();
+  renderWave(state.animateWave);
+  state.animateWave = false;
+  renderKpis();
+  renderFunnels();
+  renderTable();
+}
+
+function renderGreeting() {
+  const h = new Date().getHours();
+  const saludo = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+  const nom = ((state.user && state.user.nombre) || '').split(' ')[0];
+  $('#greet').innerHTML = esc(saludo + (nom ? ', ' + nom : '')) + (DEMO ? '<span class="demo-tag">Demostración</span>' : '');
+
+  const rows = scopeRows();
+  const n = rows.length, c = rows.filter(r => r.estado === 'Contestó').length;
+  if (!state.loaded) { $('#lede').textContent = 'Cargando tus llamadas…'; return; }
+  if (!n) { $('#lede').textContent = 'Aún no hay llamadas en este periodo.'; return; }
+  const pre = state.range === 'hoy' ? 'Hoy se han hecho'
+    : state.range === 'todo' ? 'En total se han hecho'
+    : `En los últimos ${state.range} días se hicieron`;
+  const fn = state.funnel !== 'all' ? ' en ' + funnelLabel(state.funnel) : '';
+  $('#lede').textContent = `${pre} ${n} ${n === 1 ? 'llamada' : 'llamadas'}${fn}, de las cuales ${c} ${c === 1 ? 'fue contestada' : 'fueron contestadas'}.`;
+}
+
+/* ---- Onda de actividad ---- */
+function buildBins(rows) {
+  const now = new Date(), bins = [];
+  if (state.range === 'hoy') {
+    const d0 = startOfDay(now).getTime();
+    for (let h = 0; h < 24; h++) bins.push({ s: d0 + h * 3600e3, e: d0 + (h + 1) * 3600e3, label: pad(h) + ':00' });
+  } else {
+    let start;
+    if (state.range === '7') start = startOfDay(addDays(now, -6));
+    else if (state.range === '30') start = startOfDay(addDays(now, -29));
+    else {
+      const ts = rows.map(r => r.ts).filter(Boolean);
+      start = startOfDay(ts.length ? new Date(Math.min(...ts)) : now);
+    }
+    const days = Math.round((startOfDay(now) - start) / 864e5) + 1;
+    const step = days > 90 ? 7 : 1;
+    for (let i = 0; i < days; i += step) {
+      const s = addDays(start, i);
+      const e = addDays(start, Math.min(i + step, days));
+      bins.push({ s: s.getTime(), e: e.getTime(), label: `${s.getDate()} ${MESES[s.getMonth()]}` });
+    }
+  }
+  bins.forEach(b => { b.up = 0; b.dn = 0; });
+  rows.forEach(r => {
+    const b = bins.find(x => r.ts >= x.s && r.ts < x.e);
+    if (!b) return;
+    if (r.estado === 'Contestó') b.up++; else b.dn++;
+  });
+  return bins;
+}
+
+let waveBins = [], waveGeom = null;
+function renderWave(animate) {
+  const box = $('#wave');
+  if (!state.loaded) {
+    box.innerHTML = '<div class="empty-wave"><span class="skel" style="width:60%;height:60px;border-radius:14px"></span></div>';
+    $('#axis').innerHTML = '';
+    return;
+  }
+  const rows = scopeRows();
+  if (!rows.length) {
+    box.innerHTML = '<div class="empty-wave">Cuando haya llamadas, verás aquí su actividad.</div>';
+    $('#axis').innerHTML = '';
+    waveBins = [];
+    return;
+  }
+  const bins = buildBins(rows);
+  waveBins = bins;
+  const W = Math.max(280, box.clientWidth || 800), H = 220, mid = H / 2, n = bins.length;
+  const gap = n > 60 ? 2 : n > 40 ? 3 : n > 20 ? 5 : 8;
+  const bw = Math.max(3, Math.min(26, (W - gap * (n - 1)) / n));
+  const total = n * bw + (n - 1) * gap;
+  const x0 = Math.max(0, (W - total) / 2);
+  const max = Math.max(1, ...bins.map(b => Math.max(b.up, b.dn)));
+  const unit = (mid - 16) / max;
+  let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Actividad de llamadas: contestadas arriba y sin respuesta abajo">`;
+  svg += `<line class="mid" x1="0" x2="${W}" y1="${mid}" y2="${mid}"/>`;
+  bins.forEach((b, i) => {
+    const x = x0 + i * (bw + gap);
+    const delay = animate ? `style="animation-delay:${Math.min(i * 14, 700)}ms"` : '';
+    if (b.up) { const h = Math.max(bw, b.up * unit); svg += `<rect class="bar up" data-i="${i}" x="${x}" y="${mid - 3 - h}" width="${bw}" height="${h}" rx="${bw / 2}" ${delay}/>`; }
+    if (b.dn) { const h = Math.max(bw, b.dn * unit); svg += `<rect class="bar dn" data-i="${i}" x="${x}" y="${mid + 3}" width="${bw}" height="${h}" rx="${bw / 2}" ${delay}/>`; }
+    if (!b.up && !b.dn) svg += `<rect class="zero" x="${x}" y="${mid - 1}" width="${bw}" height="2" rx="1"/>`;
+  });
+  svg += '</svg>';
+  box.classList.toggle('rise', !!animate);
+  box.innerHTML = svg;
+  waveGeom = { x0, bw, gap, W };
+  const a = bins[0].label, m = bins[Math.floor(n / 2)].label, z = bins[n - 1].label;
+  $('#axis').innerHTML = n > 2 ? `<span>${a}</span><span>${m}</span><span>${z}</span>` : `<span>${a}</span><span>${z}</span>`;
+}
+function waveHover(ev) {
+  const box = $('#wave'), svg = $('svg', box);
+  if (!svg || !waveGeom || !waveBins.length) return;
+  const rect = svg.getBoundingClientRect();
+  const x = ev.clientX - rect.left;
+  const i = Math.floor((x - waveGeom.x0 + waveGeom.gap / 2) / (waveGeom.bw + waveGeom.gap));
+  const tip = $('#tip');
+  if (i < 0 || i >= waveBins.length) { waveLeave(); return; }
+  const b = waveBins[i];
+  $$('rect.bar', svg).forEach(r => r.classList.toggle('on', Number(r.dataset.i) === i));
+  svg.dataset.hot = i;
+  tip.innerHTML = `<b>${esc(b.label)}</b><br>${b.up} ${b.up === 1 ? 'contestada' : 'contestadas'}, ${b.dn} sin respuesta`;
+  const wb = $('.wave-block').getBoundingClientRect();
+  const cx = waveGeom.x0 + i * (waveGeom.bw + waveGeom.gap) + waveGeom.bw / 2;
+  tip.style.left = Math.min(Math.max(cx + (rect.left - wb.left), 70), wb.width - 70) + 'px';
+  tip.style.top = (rect.top - wb.top + 6) + 'px';
+  tip.classList.add('show');
+}
+function waveLeave() {
+  const svg = $('#wave svg');
+  if (svg) { delete svg.dataset.hot; $$('rect.bar', svg).forEach(r => r.classList.remove('on')); }
+  $('#tip').classList.remove('show');
+}
+$('#wave').addEventListener('mousemove', waveHover);
+$('#wave').addEventListener('mouseleave', waveLeave);
+
+/* ---- KPIs ---- */
+function renderKpis() {
+  const rows = scopeRows();
+  const n = rows.length;
+  const cont = rows.filter(r => r.estado === 'Contestó');
+  const pct = n ? Math.round(cont.length / n * 100) : 0;
+  const avg = cont.length ? cont.reduce((s, r) => s + r.dur, 0) / cont.length : 0;
+  const cost = rows.reduce((s, r) => s + r.costo, 0);
+  const ok = rows.filter(r => r.exitosa === 'Sí').length;
+  const items = [
+    { v: n, l: 'Llamadas', n: 'en este periodo' },
+    { v: pct + '%', l: 'Contestadas', n: `${cont.length} de ${n}` },
+    { v: cont.length ? mmss(avg) : '—', l: 'Duración media', n: 'solo llamadas contestadas' },
+    { v: money(cost), l: 'Costo total', n: ok ? `${ok} con objetivo cumplido` : 'en Retell' }
+  ];
+  $('#kpis').innerHTML = state.loaded
+    ? items.map(k => `<div class="kpi"><div class="v serif">${esc(k.v)}</div><div class="l">${esc(k.l)}</div><div class="n">${esc(k.n)}</div></div>`).join('')
+    : items.map(k => `<div class="kpi"><div class="skel" style="width:90px;height:40px"></div><div class="skel" style="width:110px;margin-top:12px"></div></div>`).join('');
+}
+
+/* ---- Funnels ---- */
+function renderFunnels() {
+  const rows = inRangeRows();
+  const counts = {}, info = {};
+  rows.forEach(r => { const f = funnelOf(r); counts[f.id] = (counts[f.id] || 0) + 1; info[f.id] = f; });
+  const ids = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  if (state.funnel !== 'all' && !ids.includes(state.funnel)) ids.push(state.funnel);
+  let h = `<button class="fchip" data-f="all" aria-pressed="${state.funnel === 'all'}">Todos <em>${rows.length}</em></button>`;
+  ids.forEach(id => {
+    const f = info[id] || { name: funnelLabel(id), color: FALLBACK_COLOR };
+    h += `<button class="fchip" data-f="${esc(id)}" aria-pressed="${state.funnel === id}" style="--c:${f.color}"><i></i>${esc(f.name)} <em>${counts[id] || 0}</em></button>`;
+  });
+  $('#funnels').innerHTML = h;
+}
+
+/* ---- Tabla ---- */
+function renderTable() {
+  const body = $('#rows'), box = $('#stateBox'), more = $('#moreBox');
+  if (!state.loaded) {
+    body.innerHTML = Array(6).fill('<tr class="skel-row"><td><div class="skel" style="width:70%"></div></td><td><div class="skel" style="width:60%"></div></td><td class="hide-sm"><div class="skel" style="width:80%"></div></td><td><div class="skel" style="width:70px"></div></td><td class="hide-sm"><div class="skel" style="width:40px;margin-left:auto"></div></td><td><div class="skel" style="width:80px;margin-left:auto"></div></td></tr>').join('');
+    box.innerHTML = ''; more.classList.add('hidden'); $('#count').textContent = '';
+    return;
+  }
+  const all = tableRows();
+  $('#count').textContent = all.length;
+  const shown = all.slice(0, state.visible);
+  body.innerHTML = shown.map(r => {
+    const f = funnelOf(r);
+    return `<tr tabindex="0" data-id="${esc(r.call_id)}">
+      <td><div class="who"><span class="avatar" style="--c:${f.color}">${esc(initials(r.nombre))}</span><div><div class="n">${esc(r.nombre || 'Sin nombre')}</div><div class="s">${esc(r.telefono || '—')}</div></div></div></td>
+      <td><span class="fun" style="--c:${f.color}"><i></i>${esc(f.name)}</span>${r.direccion === 'Entrante' ? '<div class="sub-in">Llamada entrante</div>' : ''}</td>
+      <td class="prog hide-sm" title="${esc(r.programa)}">${esc(r.programa || '—')}</td>
+      <td>${badge(r.estado)}</td>
+      <td class="num hide-sm r">${r.dur ? mmss(r.dur) : '—'}</td>
+      <td class="when r">${esc(fmtWhen(r.ts))}</td>
+    </tr>`;
+  }).join('');
+  if (!all.length) {
+    const filtros = state.q || state.estado !== 'all' || state.funnel !== 'all' || state.dir !== 'all';
+    box.innerHTML = filtros
+      ? `<div class="state"><b>No hay llamadas con estos filtros</b>Prueba con otra búsqueda o quita algún filtro.<button class="btn-ghost" id="clear">Limpiar filtros</button></div>`
+      : `<div class="state"><b>Todavía no hay llamadas en este periodo</b>Cuando Retell termine una llamada, aparecerá aquí.</div>`;
+    const c = $('#clear');
+    if (c) c.addEventListener('click', () => { state.q = ''; state.estado = 'all'; state.funnel = 'all'; state.dir = 'all'; $('#q').value = ''; $('#estado').value = 'all'; $('#dir').value = 'all'; state.visible = 25; renderAll(); });
+  } else box.innerHTML = '';
+  more.classList.toggle('hidden', all.length <= state.visible);
+  $('#more').textContent = `Ver más llamadas (${all.length - state.visible} restantes)`;
+}
+
+/* ================== Eventos de la interfaz ================== */
+$('#range').addEventListener('click', e => {
+  const b = e.target.closest('button[data-range]');
+  if (!b) return;
+  state.range = b.dataset.range;
+  localStorage.setItem('llamadas_rango', state.range);
+  $$('#range button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  state.visible = 25;
+  state.animateWave = true;
+  renderAll();
+});
+$('#funnels').addEventListener('click', e => {
+  const b = e.target.closest('.fchip');
+  if (!b) return;
+  state.funnel = b.dataset.f;
+  state.visible = 25;
+  state.animateWave = true;
+  renderAll();
+});
+let qTimer;
+$('#q').addEventListener('input', e => {
+  clearTimeout(qTimer);
+  qTimer = setTimeout(() => { state.q = e.target.value; state.visible = 25; renderTable(); }, 160);
+});
+$('#estado').addEventListener('change', e => { state.estado = e.target.value; state.visible = 25; renderTable(); });
+$('#dir').addEventListener('change', e => { state.dir = e.target.value; state.visible = 25; renderTable(); });
+$('#nav').addEventListener('click', e => { const b = e.target.closest('button[data-view]'); if (b) setView(b.dataset.view); });
+$('#more').addEventListener('click', () => { state.visible += 25; renderTable(); });
+$('#refresh').addEventListener('click', () => {
+  if (state.view === 'seguimiento') loadSeg(false);
+  else if (state.view === 'ajustes') loadAjustes();
+  else loadData(false);
+});
+$('#rows').addEventListener('click', e => { const tr = e.target.closest('tr[data-id]'); if (tr) openDrawer(tr.dataset.id, tr); });
+$('#rows').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const tr = e.target.closest('tr[data-id]');
+  if (tr) { e.preventDefault(); openDrawer(tr.dataset.id, tr); }
+});
+
+// Menú de usuario
+$('#meBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const m = $('#meMenu'), open = m.classList.toggle('hidden') === false;
+  $('#meBtn').setAttribute('aria-expanded', String(open));
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('.me')) { $('#meMenu').classList.add('hidden'); $('#meBtn').setAttribute('aria-expanded', 'false'); }
+});
+$('#logout').addEventListener('click', () => { $('#meMenu').classList.add('hidden'); logout(''); });
+
+// Exportar CSV
+$('#export').addEventListener('click', () => {
+  const rows = tableRows();
+  if (!rows.length) { toast('No hay llamadas para exportar'); return; }
+  const cols = ['Fecha','Contacto','Teléfono','Funnel','Programa','Estado','Duración (s)','Motivo de cierre','Deal','Marca','Tipo'];
+  const cell = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const lines = [cols.map(cell).join(',')].concat(rows.map(r => [
+    r.fecha_inicio, r.nombre, r.telefono, funnelOf(r).name, r.programa, r.estado, r.dur, MOTIVOS[r.motivo_desconexion] || r.motivo_desconexion, r.deal_id, r.marca, r.direccion || 'Saliente'
+  ].map(cell).join(',')));
+  const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `llamadas-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toast(`Se exportaron ${rows.length} llamadas`);
+});
+
+/* ================== Detalle de la llamada ================== */
+function transcriptHTML(t) {
+  t = String(t || '').trim();
+  if (!t) return '<p>Esta llamada no tiene transcripción.</p>';
+  const parts = t.split(/\n(?=(?:Agent|User|Agente|Usuario):\s)/);
+  const msgs = parts.map(p => p.match(/^(Agent|User|Agente|Usuario):\s*([\s\S]*)$/)).filter(Boolean);
+  if (!msgs.length) return `<div class="raw">${esc(t)}</div>`;
+  return '<div class="chat">' + msgs.map(m => {
+    const agent = /^Agent|^Agente/.test(m[1]);
+    return `<div class="msg ${agent ? 'agent' : 'user'}"><small>${agent ? 'Agente' : 'Cliente'}</small>${esc(m[2].trim())}</div>`;
+  }).join('') + '</div>';
+}
+
+function drawerHTML(base, d) {
+  const r = d || base || {};
+  const f = funnelOf(r);
+  const ts = Date.parse(r.fecha_inicio) || 0;
+  const dur = Number(r.duracion_seg) || 0;
+  const rec = safeUrl(r.grabacion_url), bx = safeUrl(r.bitrix_url);
+  let h = `<div class="d-top"><span class="fun" style="--c:${f.color}"><i></i>${esc(f.name)}</span>
+    <button class="icon-btn" id="dClose" aria-label="Cerrar detalle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="d-body">
+      <h2 class="d-name serif">${esc(r.nombre || 'Sin nombre')}</h2>
+      <div class="d-sub"><span>${esc(r.telefono || '—')}</span>${badge(r.estado)}</div>
+      <dl class="d-meta">
+        <div><dt>Fecha</dt><dd>${esc(fmtLong(ts))}</dd></div>
+        <div><dt>Duración</dt><dd>${dur ? mmss(dur) : '—'}</dd></div>
+        <div><dt>Programa</dt><dd>${esc(r.programa || '—')}</dd></div>
+        <div><dt>Cómo terminó</dt><dd>${esc(MOTIVOS[r.motivo_desconexion] || r.motivo_desconexion || '—')}</dd></div>
+        <div><dt>Sentimiento del cliente</dt><dd>${esc(SENT[r.sentimiento] || r.sentimiento || '—')}</dd></div>
+        <div><dt>Objetivo cumplido</dt><dd>${esc(r.exitosa || '—')}</dd></div>
+        <div><dt>Costo</dt><dd>${r.costo_usd !== '' && r.costo_usd != null ? money(r.costo_usd) : '—'}</dd></div>
+        <div><dt>Deal en Bitrix</dt><dd>${esc(r.deal_id || '—')}</dd></div>
+        <div><dt>Marca</dt><dd>${esc(r.marca || '—')}</dd></div>
+        <div><dt>Tipo de llamada</dt><dd>${esc(r.direccion || 'Saliente')}</dd></div>
+      </dl>`;
+  if (!d) {
+    h += `<div class="d-sec"><div class="skel" style="width:40%;height:22px"></div><div class="skel" style="margin-top:16px"></div><div class="skel" style="margin-top:10px;width:85%"></div><div class="skel" style="margin-top:10px;width:70%"></div></div>`;
+  } else {
+    if (rec) h += `<div class="d-sec"><h3 class="serif">Grabación</h3><audio controls preload="none" src="${esc(rec)}"></audio></div>`;
+    h += `<div class="d-sec"><h3 class="serif">Resumen</h3><p>${esc(r.resumen || 'Esta llamada no tiene resumen.')}</p></div>`;
+    h += `<div class="d-sec"><h3 class="serif">Conversación</h3>${transcriptHTML(r.transcript)}</div>`;
+    h += `<div class="d-actions">${bx ? `<a class="main" href="${esc(bx)}" target="_blank" rel="noopener">Abrir en Bitrix</a>` : ''}${r.transcript ? '<button class="alt" id="dCopy">Copiar conversación</button>' : ''}<button class="alt" id="dLink">Copiar enlace</button></div>`;
+  }
+  return h + '</div>';
+}
+
+async function openDrawer(id, fromEl) {
+  const base = state.rows.find(r => r.call_id === id);
+  const dr = $('#drawer');
+  state.lastFocus = fromEl || document.activeElement;
+  state.openId = id;
+  const cached = state.detail[id];
+  dr.innerHTML = drawerHTML(base, cached);
+  dr.setAttribute('aria-label', 'Detalle de la llamada');
+  dr.classList.add('open'); $('#scrim').classList.add('open'); dr.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  bindDrawer(id);
+  const c = $('#dClose'); if (c) c.focus();
+  if (cached) return;
+  try {
+    const r = await api('detalle', { call_id: id });
+    if (state.openId !== id) return;
+    if (!r || !r.ok) throw new Error('detalle');
+    state.detail[id] = r.llamada;
+    dr.innerHTML = drawerHTML(base, r.llamada);
+    bindDrawer(id);
+    const c2 = $('#dClose'); if (c2) c2.focus();
+  } catch (ex) {
+    if (state.openId !== id) return;
+    dr.querySelector('.d-sec').innerHTML = '<p>No pudimos cargar el detalle de esta llamada. Cierra el panel e inténtalo de nuevo.</p>';
+  }
+}
+function bindDrawer(id) {
+  const c = $('#dClose'); if (c) c.addEventListener('click', closeDrawer);
+  const cp = $('#dCopy');
+  if (cp) cp.addEventListener('click', () => copyText(state.detail[id].transcript, 'Conversación copiada'));
+  const lk = $('#dLink');
+  if (lk) lk.addEventListener('click', () => copyText(location.origin + location.pathname + '?call=' + encodeURIComponent(id), 'Enlace copiado'));
+}
+function closeDrawer() {
+  const dr = $('#drawer');
+  if (!dr.classList.contains('open')) return;
+  dr.classList.remove('open'); $('#scrim').classList.remove('open'); dr.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  const au = $('audio', dr); if (au) au.pause();
+  state.openId = null;
+  if (state.lastFocus && document.contains(state.lastFocus)) state.lastFocus.focus();
+}
+$('#scrim').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+async function copyText(t, msg) {
+  try { await navigator.clipboard.writeText(t); toast(msg); }
+  catch (e) { toast('No se pudo copiar. Selecciona el texto y cópialo a mano.'); }
+}
+
+/* ================== Marcas y números (administrador) ================== */
+const ICON_EDIT = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const CFG_ERRORES = {
+  numero_invalido: 'El número no es válido. Escríbelo con código de país, por ejemplo +18632703320.',
+  falta_marca: 'Escribe la marca a la que pertenece.',
+  uso_invalido: 'Elige para qué se usa el número.',
+  duplicado: 'Ya existe un registro con ese dato. Edítalo en la lista en lugar de crearlo otra vez.',
+  codigo_invalido: 'El código debe ser un número: el CATEGORY_ID del funnel en Bitrix.',
+  falta_nombre: 'Escribe el nombre del funnel.',
+  numero_no_existe: 'Ese número no está en la lista. Agrégalo primero en Números.',
+  numero_solo_entrante: 'Ese número solo recibe llamadas. Elige uno que también las haga.',
+  en_uso: 'No se puede eliminar porque lo usan estos funnels. Cámbiales el número antes de eliminarlo.',
+  en_uso_saliente: 'Este número lo usan funnels para llamar. Cámbiales el número antes de dejarlo solo para llamadas entrantes.',
+  sin_permiso: 'Solo un administrador puede cambiar esta configuración.',
+  no_encontrada: 'Ese registro ya no existe. Actualiza la lista.'
+};
+function cfgMsg(r) {
+  let m = CFG_ERRORES[r && r.error] || 'No pudimos guardar los cambios. Inténtalo otra vez.';
+  if (r && r.funnels && r.funnels.length) m += ' (' + r.funnels.join(', ') + ')';
+  return m;
+}
+
+function rebuildFunnels() {
+  FUNNELS = {};
+  state.cfg.funnels.forEach(f => {
+    FUNNELS[f.category_id] = { name: f.funnel || 'Funnel ' + f.category_id, color: colorFor(f.category_id), marca: f.marca || '' };
+  });
+}
+
+async function loadConfig() {
+  try {
+    const r = await api('config_listar');
+    if (!r || !r.ok) throw new Error((r && r.error) || 'error');
+    state.cfg = { admin: !!r.admin, numeros: r.numeros || [], funnels: r.funnels || [] };
+    state.cfgError = false;
+    rebuildFunnels();
+  } catch (e) { state.cfgError = true; }
+  if (state.loaded) renderAll();
+  if (state.view === 'config') renderConfig();
+}
+
+function setView(v) {
+  state.view = v;
+  $('#viewLlamadas').classList.toggle('hidden', v !== 'llamadas');
+  $('#viewSeguimiento').classList.toggle('hidden', v !== 'seguimiento');
+  $('#viewAjustes').classList.toggle('hidden', v !== 'ajustes');
+  $('#viewConfig').classList.toggle('hidden', v !== 'config');
+  $('#range').classList.toggle('hidden', v !== 'llamadas');
+  $$('#nav button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+  closeDrawer();
+  if (v === 'config') renderConfig();
+  else if (v === 'seguimiento') { renderSeg(); loadSeg(state.segLoaded); }
+  else if (v === 'ajustes') { renderAjustes(); loadAjustes(); }
+  else if (state.loaded) renderWave(false);
+}
+
+const usoBadge = u => `<span class="badge" data-u="${esc(u)}">${esc(u)}</span>`;
+
+function renderConfig() {
+  const { numeros, funnels } = state.cfg;
+  $('#cfgBanner').innerHTML = state.cfgError
+    ? '<div class="banner" role="alert">No pudimos cargar la configuración. Revisa que el backend esté actualizado (Code.gs) e inténtalo otra vez. <button id="cfgRetry">Reintentar</button></div>'
+    : '';
+  const rt = $('#cfgRetry'); if (rt) rt.addEventListener('click', loadConfig);
+
+  $('#cntNum').textContent = numeros.length;
+  $('#cntFun').textContent = funnels.length;
+
+  $('#numRows').innerHTML = numeros.map(n => {
+    const llama = n.uso !== 'Entrante';
+    const agente = n.agente_id
+      ? `<span class="agent-id" title="${esc(n.agente_id)}">${esc(n.agente_id)}</span>`
+      : (llama ? '<span class="warn">Falta el agente, no llama</span>' : '<span class="muted">No lo necesita</span>');
+    return `<tr tabindex="0" data-kind="num" data-key="${esc(n.numero)}" class="${n.activo === 'No' ? 'inact' : ''}">
+      <td class="mono">${esc(n.numero)}</td>
+      <td>${esc(n.marca)}</td>
+      <td>${usoBadge(n.uso)}</td>
+      <td class="hide-sm">${agente}</td>
+      <td class="hide-sm">${n.activo === 'No' ? '<span class="muted">Inactivo</span>' : 'Activo'}</td>
+      <td class="r"><span class="row-edit" aria-hidden="true">${ICON_EDIT}</span></td>
+    </tr>`;
+  }).join('');
+  $('#numState').innerHTML = numeros.length ? '' : '<div class="state"><b>Todavía no hay números</b>Agrega el primero para que el sistema sepa desde dónde llamar.</div>';
+
+  $('#funRows').innerHTML = funnels.map(f => {
+    const n = numeros.find(x => x.numero === f.numero_salida);
+    let desde;
+    if (!f.numero_salida) desde = '<span class="muted">Sin número, no llama</span>';
+    else if (n && n.activo === 'No') desde = `<span class="mono">${esc(f.numero_salida)}</span><div class="sub-in warn">Número inactivo, no llama</div>`;
+    else if (n && !n.agente_id) desde = `<span class="mono">${esc(f.numero_salida)}</span><div class="sub-in warn">Falta el agente, no llama</div>`;
+    else desde = `<span class="mono">${esc(f.numero_salida)}</span>`;
+    return `<tr tabindex="0" data-kind="fun" data-key="${esc(f.category_id)}">
+      <td class="mono">${esc(f.category_id)}</td>
+      <td><span class="fun" style="--c:${colorFor(f.category_id)}"><i></i>${esc(f.funnel)}</span></td>
+      <td class="hide-sm">${esc(f.marca || '—')}</td>
+      <td>${desde}</td>
+      <td class="r"><span class="row-edit" aria-hidden="true">${ICON_EDIT}</span></td>
+    </tr>`;
+  }).join('');
+  $('#funState').innerHTML = funnels.length ? '' : '<div class="state"><b>Todavía no hay funnels</b>Agrega un funnel para decidir desde qué número se llama a sus leads.</div>';
+}
+
+function marcasConocidas() {
+  return [...new Set([...state.cfg.numeros.map(n => n.marca), ...state.cfg.funnels.map(f => f.marca)].filter(Boolean))];
+}
+function formTop(titulo) {
+  return `<div class="d-top"><span class="fun" style="--c:var(--accent)"><i></i>${esc(titulo)}</span>
+    <button class="icon-btn" id="dClose" type="button" aria-label="Cerrar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>`;
+}
+function numFormHTML(n) {
+  const nuevo = !n;
+  const v = n || { numero: '', marca: '', uso: 'Ambos', agente_id: '', variables: '', activo: 'Sí' };
+  const opt = (val, txt) => `<option value="${val}" ${v.uso === val ? 'selected' : ''}>${txt}</option>`;
+  return formTop(nuevo ? 'Nuevo número' : 'Editar número') + `
+    <form class="d-body" id="cfgForm" data-tabla="numeros" data-original="${esc(nuevo ? '' : v.numero)}" novalidate>
+      <h2 class="d-name serif">${nuevo ? 'Agregar número' : esc(v.numero)}</h2>
+      <p class="cfg-note">${nuevo ? 'Registra un número de Retell y dinos si recibe llamadas, las hace o ambas cosas.' : esc(v.marca)}</p>
+      <div style="height:20px"></div>
+      <label class="field"><span>Número</span>
+        <input class="input" name="numero" value="${esc(v.numero)}" placeholder="+18632703320" inputmode="tel" autocomplete="off">
+        <small class="f-hint">Con código de país. Si falta el +, lo agregamos.</small></label>
+      <label class="field"><span>Marca</span>
+        <input class="input" name="marca" value="${esc(v.marca)}" list="dlMarcas" autocomplete="off">
+        <datalist id="dlMarcas">${marcasConocidas().map(m => `<option value="${esc(m)}"></option>`).join('')}</datalist></label>
+      <label class="field"><span>Uso</span>
+        <select class="select full" name="uso">${opt('Ambos', 'Ambos: recibe y hace llamadas')}${opt('Saliente', 'Saliente: solo hace llamadas')}${opt('Entrante', 'Entrante: solo recibe llamadas')}</select></label>
+      <label class="field"><span>Agente de Retell</span>
+        <input class="input" name="agente_id" value="${esc(v.agente_id)}" placeholder="agent_…" autocomplete="off" spellcheck="false">
+        <small class="f-hint">Obligatorio para llamar. Los números que solo reciben llamadas no lo necesitan.</small></label>
+      <label class="field"><span>Variables extra del agente</span>
+        <textarea class="input area" name="variables" rows="3" placeholder="utm_campaign = UTM_CAMPAIGN" spellcheck="false">${esc(v.variables)}</textarea>
+        <small class="f-hint">Una por línea: nombre en el prompt de Retell = código del campo del deal en Bitrix.</small></label>
+      <label class="check"><input type="checkbox" name="activo" ${v.activo === 'No' ? '' : 'checked'}> Número activo</label>
+      <p class="form-error" id="cfgErr" role="alert"></p>
+      <div class="d-actions"><button type="submit" class="main" id="cfgSave">Guardar</button>${nuevo ? '' : '<button type="button" class="alt" id="cfgDel">Eliminar</button>'}</div>
+    </form>`;
+}
+function funFormHTML(f) {
+  const nuevo = !f;
+  const v = f || { category_id: '', funnel: '', marca: '', numero_salida: '' };
+  const salientes = state.cfg.numeros.filter(n => n.uso !== 'Entrante');
+  const opts = ['<option value="">Ninguno: no llama</option>'].concat(salientes.map(n => `<option value="${esc(n.numero)}" ${n.numero === v.numero_salida ? 'selected' : ''}>${esc(n.numero)} (${esc(n.marca)})</option>`));
+  return formTop(nuevo ? 'Nuevo funnel' : 'Editar funnel') + `
+    <form class="d-body" id="cfgForm" data-tabla="funnels" data-original="${esc(nuevo ? '' : v.category_id)}" novalidate>
+      <h2 class="d-name serif">${nuevo ? 'Agregar funnel' : esc(v.funnel)}</h2>
+      <p class="cfg-note">${nuevo ? 'Relaciona un funnel de Bitrix con la marca y el número desde el que se llama a sus leads.' : 'Código ' + esc(v.category_id)}</p>
+      <div style="height:20px"></div>
+      <label class="field"><span>Código en Bitrix (CATEGORY_ID)</span>
+        <input class="input" name="category_id" value="${esc(v.category_id)}" inputmode="numeric" autocomplete="off"></label>
+      <label class="field"><span>Nombre del funnel</span>
+        <input class="input" name="funnel" value="${esc(v.funnel)}" autocomplete="off"></label>
+      <label class="field"><span>Marca</span>
+        <input class="input" name="marca" value="${esc(v.marca)}" list="dlMarcas" autocomplete="off">
+        <datalist id="dlMarcas">${marcasConocidas().map(m => `<option value="${esc(m)}"></option>`).join('')}</datalist></label>
+      <label class="field"><span>Llama desde</span>
+        <select class="select full" name="numero_salida">${opts.join('')}</select>
+        <small class="f-hint">Solo aparecen los números que hacen llamadas.</small></label>
+      <p class="form-error" id="cfgErr" role="alert"></p>
+      <div class="d-actions"><button type="submit" class="main" id="cfgSave">Guardar</button>${nuevo ? '' : '<button type="button" class="alt" id="cfgDel">Eliminar</button>'}</div>
+    </form>`;
+}
+
+function openForm(html) {
+  const dr = $('#drawer');
+  state.lastFocus = document.activeElement;
+  state.openId = null;
+  dr.innerHTML = html;
+  dr.setAttribute('aria-label', 'Editar configuración');
+  dr.classList.add('open'); $('#scrim').classList.add('open'); dr.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  $('#dClose').addEventListener('click', closeDrawer);
+  const f = $('#cfgForm');
+  f.addEventListener('submit', onCfgSubmit);
+  const d = $('#cfgDel'); if (d) d.addEventListener('click', onCfgDelete);
+  const first = f.querySelector('input:not([type=checkbox])'); if (first) first.focus();
+}
+
+async function onCfgSubmit(e) {
+  e.preventDefault();
+  const form = e.currentTarget, fd = new FormData(form), tabla = form.dataset.tabla;
+  const reg = tabla === 'numeros'
+    ? { numero: fd.get('numero'), marca: fd.get('marca'), uso: fd.get('uso'), agente_id: fd.get('agente_id'), variables: fd.get('variables'), activo: fd.get('activo') ? 'Sí' : 'No' }
+    : { category_id: fd.get('category_id'), funnel: fd.get('funnel'), marca: fd.get('marca'), numero_salida: fd.get('numero_salida') };
+  const btn = $('#cfgSave'), err = $('#cfgErr');
+  err.textContent = ''; btn.disabled = true; btn.textContent = 'Guardando…';
+  try {
+    const r = await api('config_guardar', { tabla, original: form.dataset.original, registro: reg });
+    if (!r || !r.ok) { err.textContent = cfgMsg(r); return; }
+    await loadConfig();
+    closeDrawer();
+    toast('Cambios guardados');
+  } catch (ex) {
+    err.textContent = 'No pudimos guardar. Revisa tu conexión e inténtalo otra vez.';
+  } finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+}
+
+let delTimer;
+async function onCfgDelete(e) {
+  const b = e.currentTarget, form = $('#cfgForm');
+  if (!b.dataset.sure) {
+    b.dataset.sure = '1'; b.textContent = 'Confirmar eliminación'; b.classList.add('danger');
+    clearTimeout(delTimer);
+    delTimer = setTimeout(() => { b.dataset.sure = ''; b.textContent = 'Eliminar'; b.classList.remove('danger'); }, 4000);
+    return;
+  }
+  clearTimeout(delTimer);
+  const err = $('#cfgErr');
+  b.disabled = true;
+  try {
+    const r = await api('config_borrar', { tabla: form.dataset.tabla, clave: form.dataset.original });
+    if (!r || !r.ok) { err.textContent = cfgMsg(r); b.disabled = false; b.dataset.sure = ''; b.textContent = 'Eliminar'; b.classList.remove('danger'); return; }
+    await loadConfig();
+    closeDrawer();
+    toast('Eliminado');
+  } catch (ex) {
+    err.textContent = 'No pudimos eliminar. Revisa tu conexión e inténtalo otra vez.'; b.disabled = false;
+  }
+}
+
+$('#addNum').addEventListener('click', () => openForm(numFormHTML(null)));
+$('#addFun').addEventListener('click', () => openForm(funFormHTML(null)));
+function abrirFilaCfg(tr) {
+  if (!tr) return;
+  if (tr.dataset.kind === 'num') openForm(numFormHTML(state.cfg.numeros.find(n => n.numero === tr.dataset.key)));
+  else openForm(funFormHTML(state.cfg.funnels.find(f => f.category_id === tr.dataset.key)));
+}
+['#numRows', '#funRows'].forEach(sel => {
+  $(sel).addEventListener('click', e => abrirFilaCfg(e.target.closest('tr[data-key]')));
+  $(sel).addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const tr = e.target.closest('tr[data-key]');
+    if (tr) { e.preventDefault(); abrirFilaCfg(tr); }
+  });
+});
+
+/* ================== Seguimiento ================== */
+const SEG_ESTADOS = ['Pendiente', 'Detenido', 'Contestó', 'Agotado', 'Cancelado'];
+const SEG_COLOR = { Pendiente: 'var(--accent)', Detenido: 'var(--e-rechazo)', 'Contestó': 'var(--e-contesto)', Agotado: 'var(--e-nocontesto)', Cancelado: 'var(--e-buzon)' };
+const SEG_ERRORES = {
+  no_encontrada: 'Ese lead ya no está en el seguimiento. Actualiza la lista.',
+  sin_permiso: 'No tienes permiso sobre el funnel de ese lead.',
+  falta_motivo: 'Elige o escribe el motivo.',
+  no_se_puede: 'Ese lead ya no está pendiente, así que no se puede detener. Actualiza la lista.'
+};
+const segBadge = e => `<span class="badge" data-s="${esc(e)}">${esc(e || '—')}</span>`;
+
+async function loadSeg(silent) {
+  if (!silent) { state.segLoaded = false; renderSeg(); }
+  try {
+    const r = await api('seg_listar');
+    if (!r || !r.ok) throw new Error((r && r.error) || 'error');
+    state.seg = r.seguimiento || [];
+    state.segMeta = { pausa: !!r.pausa, max: r.max_intentos || 4 };
+    state.segError = false;
+  } catch (e) { if (!silent || !state.segLoaded) state.segError = true; }
+  state.segLoaded = true;
+  if (state.view === 'seguimiento') renderSeg();
+}
+
+function segSorted(rows) {
+  const t = r => Date.parse(r.proximo_intento) || Infinity;
+  const orden = e => SEG_ESTADOS.indexOf(e) < 0 ? 9 : SEG_ESTADOS.indexOf(e);
+  return rows.slice().sort((a, b) => orden(a.estado) - orden(b.estado) || (a.estado === 'Pendiente' ? t(a) - t(b) : String(b.actualizado).localeCompare(String(a.actualizado))));
+}
+
+function segFiltered() {
+  const q = state.segQ.trim().toLowerCase();
+  return segSorted(state.seg.filter(r => {
+    if (state.segEstado !== 'all' && r.estado !== state.segEstado) return false;
+    if (!q) return true;
+    return [r.nombre, r.telefono, r.programa, r.deal_id, r.funnel, r.marca].some(x => String(x || '').toLowerCase().includes(q));
+  }));
+}
+
+function segProxima(r) {
+  if (r.estado !== 'Pendiente') return '<span class="muted">—</span>';
+  const ts = Date.parse(r.proximo_intento);
+  if (isNaN(ts)) return '<span class="muted">—</span>';
+  return ts <= Date.now() + 60000 ? 'En cola, pronto' : esc(fmtWhen(ts));
+}
+
+function renderSeg() {
+  const meta = state.segMeta;
+  let banner = '';
+  if (state.segError) banner = '<div class="banner" role="alert">No pudimos cargar el seguimiento. Revisa que el backend esté actualizado (Code.gs) e inténtalo otra vez. <button id="segRetry">Reintentar</button></div>';
+  else if (meta.pausa) banner = '<div class="banner pause" role="status">Las llamadas están <b>pausadas</b>: no se llamará a nadie hasta que las reactives.' + (state.user && state.user.rol === 'admin' ? ' <button id="segGoAj">Ir a Ajustes</button>' : '') + '</div>';
+  $('#segBanner').innerHTML = banner;
+  const rt = $('#segRetry'); if (rt) rt.addEventListener('click', () => loadSeg(false));
+  const ga = $('#segGoAj'); if (ga) ga.addEventListener('click', () => setView('ajustes'));
+
+  const cnt = {}; state.seg.forEach(r => { cnt[r.estado] = (cnt[r.estado] || 0) + 1; });
+  let ch = `<button class="fchip" data-e="all" aria-pressed="${state.segEstado === 'all'}">Todos <em>${state.seg.length}</em></button>`;
+  SEG_ESTADOS.forEach(e => { ch += `<button class="fchip" data-e="${e}" aria-pressed="${state.segEstado === e}" style="--c:${SEG_COLOR[e]}"><i></i>${e} <em>${cnt[e] || 0}</em></button>`; });
+  $('#segChips').innerHTML = ch;
+
+  const body = $('#segRows'), box = $('#segState');
+  if (!state.segLoaded) {
+    body.innerHTML = Array(5).fill('<tr class="skel-row"><td><div class="skel" style="width:70%"></div></td><td><div class="skel" style="width:60%"></div></td><td class="hide-sm"><div class="skel" style="width:80%"></div></td><td class="hide-sm"><div class="skel" style="width:50px"></div></td><td><div class="skel" style="width:90px"></div></td><td><div class="skel" style="width:70px"></div></td><td></td></tr>').join('');
+    box.innerHTML = ''; $('#segCount').textContent = '';
+    return;
+  }
+  const rows = segFiltered();
+  $('#segCount').textContent = rows.length;
+  body.innerHTML = rows.map(r => {
+    const col = (FUNNELS[r.category_id] || {}).color || colorFor(r.category_id || r.marca || 'x');
+    const n = Number(r.intento) || 0;
+    const detalle = r.estado === 'Detenido'
+      ? esc(r.detenido_motivo || 'Detenido') + (r.detenido_por ? ' · ' + esc(r.detenido_por) : '')
+      : esc(r.ultimo_resultado || '');
+    let act;
+    if (r.estado === 'Pendiente') act = `<button class="btn-row stop" data-act="stop" data-deal="${esc(r.deal_id)}">Detener</button>`;
+    else if (r.estado === 'Detenido') act = `<button class="btn-row go" data-act="resume" data-deal="${esc(r.deal_id)}">Reanudar</button>`;
+    else act = `<button class="btn-row" data-act="again" data-deal="${esc(r.deal_id)}">Volver a llamar</button>`;
+    return `<tr data-deal="${esc(r.deal_id)}">
+      <td><div class="who"><span class="avatar" style="--c:${col}">${esc(initials(r.nombre))}</span><div><div class="n">${esc(r.nombre || 'Sin nombre')}</div><div class="s">${esc(r.telefono || '—')}</div></div></div></td>
+      <td><span class="fun" style="--c:${col}"><i></i>${esc(r.marca || r.funnel || '—')}</span>${r.funnel && r.marca ? `<div class="sub-in">${esc(r.funnel)}</div>` : ''}</td>
+      <td class="prog hide-sm" title="${esc(r.programa)}">${esc(r.programa || '—')}</td>
+      <td class="hide-sm">${n ? n + ' de ' + state.segMeta.max : '<span class="muted">Sin llamar</span>'}</td>
+      <td>${segProxima(r)}</td>
+      <td>${segBadge(r.estado)}<div class="sub-in">${detalle}</div></td>
+      <td class="r">${act}</td>
+    </tr>`;
+  }).join('');
+  if (!rows.length) {
+    const filtros = state.segQ || state.segEstado !== 'all';
+    box.innerHTML = filtros
+      ? '<div class="state"><b>No hay leads con estos filtros</b>Prueba con otra búsqueda o elige otro estado.</div>'
+      : '<div class="state"><b>Todavía no hay leads en el seguimiento</b>Cuando un lead entre al funnel de Bitrix, aparecerá aquí.</div>';
+  } else box.innerHTML = '';
+}
+
+$('#segChips').addEventListener('click', e => {
+  const b = e.target.closest('.fchip'); if (!b) return;
+  state.segEstado = b.dataset.e; renderSeg();
+});
+let segQTimer;
+$('#segQ').addEventListener('input', e => {
+  clearTimeout(segQTimer);
+  segQTimer = setTimeout(() => { state.segQ = e.target.value; renderSeg(); }, 160);
+});
+
+let segSureTimer;
+$('#segRows').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const deal = b.dataset.deal, row = state.seg.find(r => r.deal_id === deal);
+  if (b.dataset.act === 'stop') { if (row) openSegForm(row); return; }
+  if (b.dataset.act === 'again' && !b.dataset.sure) {
+    b.dataset.sure = '1'; b.textContent = 'Confirmar'; b.classList.add('sure');
+    clearTimeout(segSureTimer);
+    segSureTimer = setTimeout(() => { b.dataset.sure = ''; b.textContent = 'Volver a llamar'; b.classList.remove('sure'); }, 4000);
+    return;
+  }
+  b.disabled = true;
+  try {
+    const r = await api('seg_reanudar', { deal_id: deal });
+    if (!r || !r.ok) { toast(SEG_ERRORES[r && r.error] || 'No pudimos hacer el cambio. Inténtalo otra vez.'); b.disabled = false; return; }
+    await loadSeg(true);
+    toast(b.dataset.act === 'resume' ? 'Seguimiento reanudado' : 'El lead volverá a entrar a la cola');
+  } catch (ex) { toast('No pudimos hacer el cambio. Revisa tu conexión.'); b.disabled = false; }
+});
+
+const MOTIVOS_STOP = [['no_llamar', 'Pidió que no lo llamen'], ['asesor', 'Ya lo atiende un asesor'], ['otro', 'Otro motivo']];
+function segFormHTML(r) {
+  const marca = r.marca || (FUNNELS[r.category_id] || {}).marca || 'esta marca';
+  return formTop('Detener seguimiento') + `
+    <form class="d-body" id="segForm" data-deal="${esc(r.deal_id)}" novalidate>
+      <h2 class="d-name serif">${esc(r.nombre || 'Sin nombre')}</h2>
+      <p class="cfg-note">${esc(r.telefono || '')} · ${esc(marca)}${r.funnel ? ' · ' + esc(r.funnel) : ''}</p>
+      <div style="height:20px"></div>
+      <div class="field"><span>Motivo</span>
+        <div class="motivos">${MOTIVOS_STOP.map((m, i) => `<label class="motivo"><input type="radio" name="motivo" value="${m[0]}" ${i === 0 ? 'checked' : ''}><span>${m[1]}</span></label>`).join('')}</div>
+      </div>
+      <label class="field hidden" id="segOtroBox"><span>Cuéntanos el motivo</span><input class="input" name="otro" maxlength="120" autocomplete="off"></label>
+      <label class="check" style="margin-bottom:6px"><input type="checkbox" name="bloquear" checked> No volver a llamar a este número en ${esc(marca)}</label>
+      <small class="f-hint">Solo se detiene este lead en ${esc(marca)}. Si el mismo número pidió información en otra marca, esa sigue su curso. Si ya hay una llamada en curso, termina, pero no se volverá a llamar. Puedes reanudarlo cuando quieras.</small>
+      <p class="form-error" id="segErr" role="alert"></p>
+      <div class="d-actions"><button type="submit" class="main" id="segSave">Detener seguimiento</button><button type="button" class="alt" id="segCancel">Cancelar</button></div>
+    </form>`;
+}
+function openSegForm(r) {
+  const dr = $('#drawer');
+  state.lastFocus = document.activeElement; state.openId = null;
+  dr.innerHTML = segFormHTML(r);
+  dr.setAttribute('aria-label', 'Detener seguimiento');
+  dr.classList.add('open'); $('#scrim').classList.add('open'); dr.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  $('#dClose').addEventListener('click', closeDrawer);
+  $('#segCancel').addEventListener('click', closeDrawer);
+  const f = $('#segForm');
+  f.addEventListener('change', e => {
+    if (e.target.name !== 'motivo') return;
+    const v = f.elements.motivo.value;
+    $('#segOtroBox').classList.toggle('hidden', v !== 'otro');
+    f.elements.bloquear.checked = v === 'no_llamar';
+    if (v === 'otro') f.elements.otro.focus();
+  });
+  f.addEventListener('submit', onSegSubmit);
+  const first = f.querySelector('input[type=radio]'); if (first) first.focus();
+}
+async function onSegSubmit(e) {
+  e.preventDefault();
+  const f = e.currentTarget, v = f.elements.motivo.value, err = $('#segErr'), btn = $('#segSave');
+  let motivo = (MOTIVOS_STOP.find(m => m[0] === v) || [])[1] || '';
+  if (v === 'otro') motivo = String(f.elements.otro.value || '').trim();
+  if (!motivo) { err.textContent = SEG_ERRORES.falta_motivo; return; }
+  err.textContent = ''; btn.disabled = true; btn.textContent = 'Deteniendo…';
+  try {
+    const r = await api('seg_detener', { deal_id: f.dataset.deal, motivo, bloquear: !!f.elements.bloquear.checked });
+    if (!r || !r.ok) { err.textContent = SEG_ERRORES[r && r.error] || 'No pudimos detenerlo. Inténtalo otra vez.'; return; }
+    await loadSeg(true);
+    closeDrawer();
+    toast(r.bloqueado ? 'Detenido. No se volverá a llamar a ese número en esa marca' : 'Seguimiento detenido');
+  } catch (ex) {
+    err.textContent = 'No pudimos detenerlo. Revisa tu conexión e inténtalo otra vez.';
+  } finally { btn.disabled = false; btn.textContent = 'Detener seguimiento'; }
+}
+
+/* ================== Ajustes de llamadas (administrador) ================== */
+const AJ_ERRORES = {
+  reintentos_invalidos: 'Los reintentos deben ir en orden (cada uno después del anterior), ser mayores que 0 y ser máximo 6.',
+  horario_invalido: 'El horario no es válido: la hora de inicio debe ser menor que la de fin.',
+  dias_invalidos: 'No puedes dejar los 7 días sin llamadas.',
+  limite_invalido: 'Las llamadas por pasada deben estar entre 1 y 20.',
+  duracion_invalida: 'Los segundos deben estar entre 0 y 600.',
+  tiempo_invalido: 'Los minutos deben estar entre 0 y 1440.',
+  ajustes_invalidos: 'Hay un dato que no es válido. Revísalos e inténtalo otra vez.',
+  sin_permiso: 'Solo un administrador puede cambiar estos ajustes.'
+};
+const UNIT_MIN = { m: 1, h: 60, d: 1440 };
+const DIAS_SEM = [[1, 'Lun'], [2, 'Mar'], [3, 'Mié'], [4, 'Jue'], [5, 'Vie'], [6, 'Sáb'], [0, 'Dom']];
+function minToUnit(m) {
+  if (m % 1440 === 0) return { n: m / 1440, u: 'd' };
+  if (m % 60 === 0) return { n: m / 60, u: 'h' };
+  return { n: m, u: 'm' };
+}
+function fmtMin(m) {
+  const x = minToUnit(m);
+  const nom = { m: ['minuto', 'minutos'], h: ['hora', 'horas'], d: ['día', 'días'] }[x.u];
+  return x.n + ' ' + nom[x.n === 1 ? 0 : 1];
+}
+function draftDe(a) {
+  return {
+    pausa: !!a.pausa, retries: a.reintentos_min.map(minToUnit), desde: a.hora_desde, hasta: a.hora_hasta,
+    dias: a.dias_sin_llamadas.slice(), tomar: a.tomar_max, minc: a.min_contestada_seg, reenc: a.reencolar_tras_min
+  };
+}
+function draftAAjustes(d) {
+  return {
+    pausa: d.pausa,
+    reintentos_min: d.retries.map(r => Math.round(Number(r.n)) * UNIT_MIN[r.u]),
+    hora_desde: Number(d.desde), hora_hasta: Number(d.hasta),
+    dias_sin_llamadas: d.dias.slice().map(Number),
+    tomar_max: Math.round(Number(d.tomar)), min_contestada_seg: Math.round(Number(d.minc)), reencolar_tras_min: Math.round(Number(d.reenc))
+  };
+}
+
+async function loadAjustes() {
+  try {
+    const r = await api('ajustes_listar');
+    if (!r || !r.ok) throw new Error((r && r.error) || 'error');
+    state.aj = r.ajustes; state.ajDraft = draftDe(r.ajustes); state.ajError = false;
+  } catch (e) { state.ajError = true; }
+  if (state.view === 'ajustes') renderAjustes();
+}
+
+function ajResumen() {
+  const d = state.ajDraft;
+  const mins = d.retries.map(r => Math.round(Number(r.n)) * UNIT_MIN[r.u]).filter(x => x > 0);
+  const total = mins.length + 1;
+  if (!mins.length) return 'Cada lead recibe <b>1 llamada</b> y no se le vuelve a llamar.';
+  return `Cada lead recibe hasta <b>${total} llamadas</b>: la primera al entrar y luego, contado desde la primera, a los ${mins.map(fmtMin).join(', ')}. Si contesta y conversa, se acaba el seguimiento.`;
+}
+
+function renderAjustes() {
+  $('#ajBanner').innerHTML = state.ajError
+    ? '<div class="banner" role="alert">No pudimos cargar los ajustes. Revisa que el backend esté actualizado (Code.gs) y ejecuta setup() una vez. <button id="ajRetry">Reintentar</button></div>' : '';
+  const rt = $('#ajRetry'); if (rt) rt.addEventListener('click', loadAjustes);
+  const d = state.ajDraft;
+  if (!d) { $('#ajBody').innerHTML = state.ajError ? '' : '<section class="sheet aj-card"><div class="skel" style="width:40%;height:22px"></div></section>'; return; }
+  const hrs = (from, to, sel) => { let o = ''; for (let h = from; h <= to; h++) o += `<option value="${h}" ${h === Number(sel) ? 'selected' : ''}>${pad(h % 24)}:00</option>`; return o; };
+  $('#ajBody').innerHTML = `
+    <section class="sheet aj-card">
+      <div class="aj-head">
+        <div style="margin-right:auto"><h2 class="serif">Llamadas automáticas</h2>
+          <p class="cfg-note" id="ajPausaNote">${state.aj.pausa ? 'Están pausadas: no se llama a nadie. Los leads siguen en la cola y se llamarán al reactivar.' : 'Activas: el marcador llama a los leads cuando les toca.'}</p></div>
+        <label class="switch"><input type="checkbox" id="ajPausa" ${state.aj.pausa ? '' : 'checked'}><span class="sw"></span><span id="ajPausaTxt">${state.aj.pausa ? 'Pausadas' : 'Activas'}</span></label>
+      </div>
+    </section>
+    <form id="ajForm" novalidate>
+    <section class="sheet aj-card">
+      <h2 class="serif">Cuándo se vuelve a llamar</h2>
+      <p class="cfg-note">Si el lead no contesta (buzón de voz, no contesta, ocupado o cuelga al inicio), se le vuelve a llamar. Cada tiempo se cuenta desde la <b>primera</b> llamada, no desde la anterior.</p>
+      <div class="ret-first">Llamada 1: apenas entra el lead (en cuanto hay espacio en la cola).</div>
+      <div id="ajRetries">${retriesHTML(d)}</div>
+      <button type="button" class="btn-ghost" id="ajAddRet" style="margin-top:14px" ${d.retries.length >= 6 ? 'disabled' : ''}>Agregar reintento</button>
+      <div class="aj-sum" id="ajResumen">${ajResumen()}</div>
+    </section>
+    <section class="sheet aj-card">
+      <h2 class="serif">Horario</h2>
+      <p class="cfg-note">Fuera de este horario no se llama. Lo que quede pendiente se retoma al abrir el horario, de a poco. Hora de Lima.</p>
+      <div class="hrs">Llamar desde las <select class="select full" id="ajDesde">${hrs(0, 23, d.desde)}</select> hasta las <select class="select full" id="ajHasta">${hrs(1, 24, d.hasta)}</select></div>
+      <p class="cfg-note" style="margin-top:22px">Días en que <b>no</b> se llama:</p>
+      <div class="dias" id="ajDias">${DIAS_SEM.map(x => `<label class="dia"><input type="checkbox" value="${x[0]}" ${d.dias.includes(x[0]) ? 'checked' : ''}>${x[1]}</label>`).join('')}</div>
+      <details class="aj-adv"><summary>Opciones avanzadas</summary>
+        <div class="grid">
+          <label class="field"><span>Llamadas por pasada</span><input class="input" id="ajTomar" type="number" min="1" max="20" value="${esc(d.tomar)}"><small class="f-hint">Máximo que el marcador inicia cada minuto (1 a 20). n8n además descuenta las que ya están en curso.</small></label>
+          <label class="field"><span>Segundos para "contestó"</span><input class="input" id="ajMinc" type="number" min="0" max="600" value="${esc(d.minc)}"><small class="f-hint">Si conversan menos que esto, se cuenta como sin contestar y se reintenta.</small></label>
+          <label class="field"><span>Volver a encolar tras (min)</span><input class="input" id="ajReenc" type="number" min="0" max="1440" value="${esc(d.reenc)}"><small class="f-hint">Si un deal que ya terminó vuelve a entrar desde Bitrix, se llama otra vez pasado este tiempo.</small></label>
+        </div>
+      </details>
+      <p class="form-error" id="ajErr" role="alert"></p>
+      <div class="aj-save"><button type="submit" class="btn-add" id="ajSave">Guardar cambios</button><span class="muted" id="ajHint"></span></div>
+    </section>
+    </form>`;
+}
+function retriesHTML(d) {
+  return d.retries.map((r, i) => `<div class="ret" data-i="${i}">
+    <span class="ret-lbl">Llamada ${i + 2}</span>
+    <input class="input ret-n" type="number" min="1" inputmode="numeric" value="${esc(r.n)}" aria-label="Tiempo de espera del reintento ${i + 1}">
+    <select class="select full ret-u" aria-label="Unidad"><option value="m" ${r.u === 'm' ? 'selected' : ''}>minutos</option><option value="h" ${r.u === 'h' ? 'selected' : ''}>horas</option><option value="d" ${r.u === 'd' ? 'selected' : ''}>días</option></select>
+    <span class="ret-after">después de la primera llamada</span>
+    <button type="button" class="icon-btn ret-x" data-i="${i}" aria-label="Quitar este reintento" title="Quitar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>`).join('');
+}
+function ajRefreshRetries() {
+  $('#ajRetries').innerHTML = retriesHTML(state.ajDraft);
+  $('#ajAddRet').disabled = state.ajDraft.retries.length >= 6;
+  $('#ajResumen').innerHTML = ajResumen();
+}
+
+$('#ajBody').addEventListener('click', e => {
+  const d = state.ajDraft; if (!d) return;
+  const x = e.target.closest('.ret-x');
+  if (x) { d.retries.splice(Number(x.dataset.i), 1); ajRefreshRetries(); return; }
+  if (e.target.closest('#ajAddRet')) {
+    const ult = d.retries.length ? Math.round(Number(d.retries[d.retries.length - 1].n)) * UNIT_MIN[d.retries[d.retries.length - 1].u] : 15;
+    d.retries.push(minToUnit(ult >= 1440 ? ult + 1440 : ult * 2));
+    ajRefreshRetries();
+  }
+});
+$('#ajBody').addEventListener('input', e => {
+  const d = state.ajDraft; if (!d) return;
+  const row = e.target.closest('.ret');
+  if (row) {
+    const r = d.retries[Number(row.dataset.i)];
+    if (e.target.classList.contains('ret-n')) r.n = e.target.value;
+    if (e.target.classList.contains('ret-u')) r.u = e.target.value;
+    $('#ajResumen').innerHTML = ajResumen();
+    return;
+  }
+  if (e.target.id === 'ajTomar') d.tomar = e.target.value;
+  if (e.target.id === 'ajMinc') d.minc = e.target.value;
+  if (e.target.id === 'ajReenc') d.reenc = e.target.value;
+});
+$('#ajBody').addEventListener('change', async e => {
+  const d = state.ajDraft; if (!d) return;
+  if (e.target.id === 'ajDesde') d.desde = e.target.value;
+  else if (e.target.id === 'ajHasta') d.hasta = e.target.value;
+  else if (e.target.closest('#ajDias')) d.dias = $$('#ajDias input:checked').map(i => Number(i.value));
+  else if (e.target.id === 'ajPausa') {
+    // La pausa se aplica al instante y no toca lo demás que estés editando
+    const sw = e.target, quiere = !sw.checked;
+    sw.disabled = true;
+    try {
+      const r = await api('ajustes_guardar', { ajustes: { ...state.aj, pausa: quiere } });
+      if (!r || !r.ok) { sw.checked = !sw.checked; toast(AJ_ERRORES[r && r.error] || 'No pudimos cambiarlo. Inténtalo otra vez.'); return; }
+      state.aj = r.ajustes; d.pausa = state.aj.pausa;
+      $('#ajPausaTxt').textContent = state.aj.pausa ? 'Pausadas' : 'Activas';
+      $('#ajPausaNote').textContent = state.aj.pausa ? 'Están pausadas: no se llama a nadie. Los leads siguen en la cola y se llamarán al reactivar.' : 'Activas: el marcador llama a los leads cuando les toca.';
+      state.segMeta.pausa = state.aj.pausa;
+      toast(state.aj.pausa ? 'Llamadas pausadas' : 'Llamadas reactivadas');
+    } catch (ex) { sw.checked = !sw.checked; toast('No pudimos cambiarlo. Revisa tu conexión.'); }
+    finally { sw.disabled = false; }
+  }
+});
+$('#ajBody').addEventListener('submit', async e => {
+  e.preventDefault();
+  const d = state.ajDraft, err = $('#ajErr'), btn = $('#ajSave');
+  if (!d) return;
+  const a = draftAAjustes({ ...d, pausa: state.aj.pausa });
+  if (a.reintentos_min.some(x => !(x >= 1))) { err.textContent = AJ_ERRORES.reintentos_invalidos; return; }
+  err.textContent = ''; btn.disabled = true; btn.textContent = 'Guardando…';
+  try {
+    const r = await api('ajustes_guardar', { ajustes: a });
+    if (!r || !r.ok) { err.textContent = AJ_ERRORES[r && r.error] || 'No pudimos guardar. Inténtalo otra vez.'; return; }
+    state.aj = r.ajustes; state.ajDraft = draftDe(r.ajustes);
+    state.segMeta.max = r.ajustes.reintentos_min.length + 1;
+    renderAjustes();
+    toast('Ajustes guardados. Se aplican desde la siguiente pasada');
+  } catch (ex) {
+    err.textContent = 'No pudimos guardar. Revisa tu conexión e inténtalo otra vez.';
+  } finally { const b2 = $('#ajSave'); if (b2) { b2.disabled = false; b2.textContent = 'Guardar cambios'; } }
+});
+
+/* ================== Ciclo de vida ================== */
+let rzTimer;
+window.addEventListener('resize', () => { clearTimeout(rzTimer); rzTimer = setTimeout(() => { if (state.loaded) renderWave(false); }, 150); });
+setInterval(() => {
+  if (!state.token || document.visibilityState !== 'visible') return;
+  loadData(true);
+  if (state.view === 'seguimiento') loadSeg(true);
+}, 90000);
+
+if (loadSession()) start(); else $('#u').focus();
+})();
+</script>
+</body>
+</html>
