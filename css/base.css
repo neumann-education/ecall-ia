@@ -265,3 +265,28 @@ dialog.wide select.input{text-overflow:ellipsis}
   .bar-right{gap:2px}
   .tabs{min-width:0}
 }
+
+/* Equipo */
+.opc{color:var(--ink3);font-weight:400}
+.chip em{font-style:normal;opacity:.6;margin-left:4px}
+.eq-marcas{flex-wrap:wrap;margin-bottom:14px}
+.eq-h{font-size:15px;font-weight:600;margin:26px 0 -6px;padding-top:18px;border-top:1px solid var(--line2)}
+.eq-card{background:var(--sheet);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px 20px;margin-bottom:14px}
+.eq-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.eq-head h3{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.eq-head .sub-m{color:var(--ink3);font-size:13.5px;margin-top:2px}
+.eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;margin-top:14px}
+.eq-grid h4{font-size:12.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.eq-lista{display:flex;flex-wrap:wrap;gap:5px;font-size:13.5px}
+.eq-lista .none{color:var(--ink3)}
+.mail{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--ink);font-size:13px;overflow-wrap:anywhere}
+.mail.cc{background:var(--mute-bg);color:var(--ink2)}
+.mail button{color:var(--ink3);line-height:1;font-size:16px;padding:0 0 1px}
+.mail button:hover{color:var(--bad)}
+.ci{border-radius:12px;background:var(--accent-soft);padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ci .mail{background:var(--sheet)}
+.ci input{flex:1;min-width:150px;height:30px;border:0;background:transparent;font:inherit;color:var(--ink);outline:none}
+.ci select{height:30px;border:0;border-radius:8px;background:var(--sheet);color:var(--ink2);font:inherit;font-size:13px;max-width:100%}
+@media (max-width:700px){.eq-grid{grid-template-columns:1fr}}
+.warn-box{margin:0 0 14px;padding:12px 16px;border-radius:12px;background:var(--warn-bg);color:var(--warn);font-size:14px}
+.muted{color:var(--ink3)}
