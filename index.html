@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Llamadas</title>
+<title>ECallIA · Panel de llamadas</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235048E5'/%3E%3Cg fill='white'%3E%3Crect x='7' y='13' width='3' height='6' rx='1.5'/%3E%3Crect x='12' y='9' width='3' height='14' rx='1.5'/%3E%3Crect x='17' y='6' width='3' height='20' rx='1.5'/%3E%3Crect x='22' y='11' width='3' height='10' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -346,7 +346,7 @@ form.d-body .d-actions{margin-top:20px}
     <form id="loginForm" class="login-form" autocomplete="on">
       <div class="brand">
         <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--accent)"/><g fill="var(--accent-ink)"><rect x="7" y="13" width="3" height="6" rx="1.5"/><rect x="12" y="9" width="3" height="14" rx="1.5"/><rect x="17" y="6" width="3" height="20" rx="1.5"/><rect x="22" y="11" width="3" height="10" rx="1.5"/></g></svg>
-        <span>Llamadas</span>
+        <span>ECallIA</span>
       </div>
       <h1 class="serif">Qué bueno verte de nuevo</h1>
       <p class="sub">Entra para ver cómo van tus llamadas.</p>
@@ -374,7 +374,7 @@ form.d-body .d-actions{margin-top:20px}
     <div class="topbar-in">
       <div class="brand">
         <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--accent)"/><g fill="var(--accent-ink)"><rect x="7" y="13" width="3" height="6" rx="1.5"/><rect x="12" y="9" width="3" height="14" rx="1.5"/><rect x="17" y="6" width="3" height="20" rx="1.5"/><rect x="22" y="11" width="3" height="10" rx="1.5"/></g></svg>
-        <span>Llamadas</span>
+        <span>ECallIA</span>
       </div>
       <div class="seg hidden" id="nav" role="group" aria-label="Sección">
         <button data-view="llamadas" aria-pressed="true">Llamadas</button>
@@ -392,6 +392,7 @@ form.d-body .d-actions{margin-top:20px}
         </button>
         <div class="menu hidden" id="meMenu">
           <div class="who"><b id="menuName"></b><span id="menuRole"></span></div>
+          <a href="campanas.html" data-admin>Campañas</a>
           <a href="usuarios.html" data-admin>Usuarios</a>
           <button id="logout">Cerrar sesión</button>
         </div>
@@ -589,12 +590,13 @@ function funnelOf(r) {
   const f = FUNNELS[id];
   if (f) return { id, name: f.name, color: f.color };
   if (id) return { id, name: r.funnel || 'Funnel ' + id, color: colorFor(id) };
+  if (String(r.funnel || '').indexOf('Campaña · ') === 0) return { id: 'c:' + r.funnel, name: r.funnel, color: colorFor(r.funnel) };
   if (r.marca) return { id: 'm:' + r.marca, name: r.marca, color: colorFor(r.marca) };
   return { id: '', name: 'Sin funnel', color: FALLBACK_COLOR };
 }
 function funnelLabel(id) {
   if (FUNNELS[id]) return FUNNELS[id].name;
-  if (String(id).startsWith('m:')) return String(id).slice(2);
+  if (String(id).startsWith('m:') || String(id).startsWith('c:')) return String(id).slice(2);
   return id ? 'Funnel ' + id : 'Sin funnel';
 }
 function fmtWhen(ts) {
@@ -773,6 +775,7 @@ function demoData() {
   demoCache = out;
   return out;
 }
+const demoAnalisis = {};
 async function demoApi(action, p) {
   await new Promise(r => setTimeout(r, 380));
   if (action === 'login') {
@@ -786,7 +789,14 @@ async function demoApi(action, p) {
   }
   if (action === 'detalle') {
     const r = demoData().find(x => x.call_id === p.call_id);
-    return r ? { ok: true, llamada: r } : { ok: false, error: 'no_encontrada' };
+    if (!r) return { ok: false, error: 'no_encontrada' };
+    const n = Number(String(r.call_id).replace(/\D/g, '')) || 0;
+    const estado = demoAnalisis[r.call_id] || (n % 2 ? '' : 'Listo');
+    return { ok: true, llamada: { ...r, analizable: r.estado === 'Contestó' && !!r.transcript, analisis_estado: estado } };
+  }
+  if (action === 'analizar') {
+    demoAnalisis[p.call_id] = 'Pendiente';
+    return { ok: true };
   }
   if (action === 'config_listar') {
     return { ok: true, admin: true, numeros: demoCfg.numeros.map(x => ({ ...x })), funnels: demoCfg.funnels.map(x => ({ ...x })) };
@@ -1370,6 +1380,10 @@ function drawerHTML(base, d) {
   if (!d) {
     h += `<div class="d-sec"><div class="skel" style="width:40%;height:22px"></div><div class="skel" style="margin-top:16px"></div><div class="skel" style="margin-top:10px;width:85%"></div><div class="skel" style="margin-top:10px;width:70%"></div></div>`;
   } else {
+    if (state.user && state.user.rol === 'admin' && r.analizable && r.analisis_estado !== 'Listo') {
+      const enProceso = r.analisis_estado === 'Pendiente';
+      h += `<div class="d-sec"><h3 class="serif">Análisis</h3><p>${enProceso ? 'El análisis de esta llamada está en proceso. Si tarda más de unos minutos, puedes volver a enviarla.' : 'Esta llamada contestada todavía no se ha analizado.'}</p><div class="d-actions"><button class="main" id="dAnalizar">${enProceso ? 'Volver a enviar al análisis' : 'Analizar llamada'}</button></div></div>`;
+    }
     if (rec) h += `<div class="d-sec"><h3 class="serif">Grabación</h3><audio controls preload="none" src="${esc(rec)}"></audio></div>`;
     h += `<div class="d-sec"><h3 class="serif">Resumen</h3><p>${esc(r.resumen || 'Esta llamada no tiene resumen.')}</p></div>`;
     h += `<div class="d-sec"><h3 class="serif">Conversación</h3>${transcriptHTML(r.transcript)}</div>`;
@@ -1408,8 +1422,37 @@ function bindDrawer(id) {
   const c = $('#dClose'); if (c) c.addEventListener('click', closeDrawer);
   const cp = $('#dCopy');
   if (cp) cp.addEventListener('click', () => copyText(state.detail[id].transcript, 'Conversación copiada'));
+  const an = $('#dAnalizar');
+  if (an) an.addEventListener('click', () => analizarLlamada(id, an));
   const lk = $('#dLink');
   if (lk) lk.addEventListener('click', () => copyText(location.origin + location.pathname + '?call=' + encodeURIComponent(id), 'Enlace copiado'));
+}
+const ERRORES_ANALIZAR = {
+  ya_analizada: 'Esta llamada ya fue analizada.',
+  no_analizable: 'Esta llamada no se puede analizar: tiene que estar contestada y tener conversación.',
+  sin_url: 'Falta configurar la dirección del análisis en el servidor.',
+  sin_permiso: 'Solo un administrador puede analizar llamadas.',
+  no_se_pudo_enviar: 'No se pudo enviar. Se reintentará sola en unos minutos.'
+};
+async function analizarLlamada(id, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+  try {
+    const r = await api('analizar', { call_id: id });
+    if (!r || !r.ok) {
+      toast(ERRORES_ANALIZAR[r && r.error] || 'No se pudo enviar al análisis. Inténtalo de nuevo.');
+      if (r && r.error === 'ya_analizada' && state.detail[id]) state.detail[id].analisis_estado = 'Listo';
+    } else {
+      toast('Enviada al análisis. El resultado aparece en la hoja de análisis en unos minutos.');
+      if (state.detail[id]) state.detail[id].analisis_estado = 'Pendiente';
+    }
+  } catch (ex) {
+    toast('No se pudo enviar al análisis. Revisa tu conexión.');
+  }
+  if (state.openId === id) {
+    $('#drawer').innerHTML = drawerHTML(state.rows.find(r => r.call_id === id), state.detail[id]);
+    bindDrawer(id);
+  }
 }
 function closeDrawer() {
   const dr = $('#drawer');
