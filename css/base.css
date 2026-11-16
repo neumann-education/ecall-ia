@@ -65,7 +65,8 @@ textarea.input{height:auto;padding:12px 14px;line-height:1.5;resize:none}
 /* Barra superior */
 .topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line2)}
 .bar{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:18px}
-.brand{font-weight:600;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.brand svg{display:block;flex:none}
 .tabs{display:flex;gap:4px;background:var(--line2);padding:3px;border-radius:11px}
 .tabs a{height:32px;padding:0 13px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--ink2);text-decoration:none;display:inline-flex;align-items:center}
 .tabs a:hover{color:var(--ink)}
@@ -242,7 +243,7 @@ dialog.wide select.input{text-overflow:ellipsis}
   .foot-hint{flex:1 1 100%;margin-right:0}
 }
 @media (max-width:720px){
-  .bar{padding:10px 16px;gap:10px}.avatar-btn .nm{display:none}.brand{display:none}
+  .bar{padding:10px 16px;gap:10px}.avatar-btn .nm{display:none}.brand span{display:none}
   .wrap{padding:28px 16px 56px}
   .dlg .row{grid-template-columns:1fr}
   .dlg{padding:22px 18px 18px}
