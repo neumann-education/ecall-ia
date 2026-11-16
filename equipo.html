@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Equipo · ECallIA - Panel de llamadas</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+
+<!-- Nada de esta página se muestra hasta que el servidor confirma que eres administrador -->
+<div class="gate" id="gate"><div class="gate-card"><div class="spin"></div><p>Verificando acceso…</p></div></div>
+
+<div id="app" hidden>
+  <header class="topbar"><div class="bar">
+    <a class="brand" href="index.html">ECallIA</a>
+    <nav class="tabs" aria-label="Secciones">
+      <a href="index.html">Llamadas</a>
+      <a href="campanas.html">Campañas</a>
+      <a href="equipo.html" aria-current="page">Equipo</a>
+      <a href="usuarios.html">Usuarios</a>
+    </nav>
+    <div class="bar-right">
+      <button class="icon-btn" id="themeBtn" aria-label="Cambiar tema" title="Cambiar tema">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <div class="me">
+        <button class="avatar-btn" id="meBtn" aria-haspopup="true" aria-expanded="false"><span class="avatar" id="meAv"></span><span class="nm" id="meNm"></span></button>
+        <div class="menu" id="meMenu" hidden>
+          <div class="who"><b id="meName"></b><span>Administrador</span></div>
+          <a href="index.html">Ir al panel de ECallIA</a>
+          <button id="logoutBtn">Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </div></header>
+
+  <main class="wrap">
+    <h1 class="title">Equipo</h1>
+    <p class="lede">Las asesoras que atienden los leads y a quién le llega el correo de cada llamada. El flujo de análisis lee esto en cada llamada: lo que cambies aquí se aplica solo, sin tocar n8n.</p>
+
+    <div class="tools">
+      <div class="chips" id="seccion" role="group" aria-label="Sección">
+        <button class="chip" data-s="asesoras" aria-pressed="true">Asesoras <em id="cntAs"></em></button>
+        <button class="chip" data-s="equipos" aria-pressed="false">Correos por equipo <em id="cntEq"></em></button>
+      </div>
+      <span class="grow"></span>
+      <div class="search" id="qBox"><input class="input" id="q" type="search" placeholder="Buscar por nombre, ID o correo" aria-label="Buscar asesoras"></div>
+      <button class="btn primary" id="newBtn">+ Nueva asesora</button>
+    </div>
+
+    <div id="bannerErr"></div>
+
+    <!-- Asesoras -->
+    <section id="secAsesoras">
+      <div class="chips eq-marcas" id="marcaChips" role="group" aria-label="Filtrar por marca"></div>
+      <div class="card"><div class="scroll">
+        <table>
+          <thead><tr><th>Asesora</th><th>ID en Bitrix</th><th>Correo</th><th>Marca</th><th></th></tr></thead>
+          <tbody id="rowsAs"></tbody>
+        </table>
+        <div class="empty" id="emptyAs" hidden></div>
+      </div></div>
+      <p class="note">El <b>ID en Bitrix</b> es el número del usuario que está como responsable del deal: así el sistema sabe qué asesora atendió cada negociación. Si el correo coincide con el de un usuario del panel, esa persona verá solo sus negociaciones.</p>
+    </section>
+
+    <!-- Equipos -->
+    <section id="secEquipos" hidden>
+      <div id="equiposLista"></div>
+      <p class="note">Cada equipo recibe el correo de los leads de sus funnels. El equipo <b>por defecto</b> (sin funnels) recibe los de los funnels que no tengan equipo propio. <b>Cita</b> se envía cuando el lead es Decidido o agendó cita; <b>seguimiento</b> cuando hay que volver a contactarlo. La <b>copia</b> es opcional y puede ser distinta en cada caso.</p>
+    </section>
+  </main>
+</div>
+
+<!-- Asesora -->
+<dialog id="dlgAs"><form class="dlg" id="formAs" method="dialog" novalidate>
+  <h2 id="asTitle">Nueva asesora</h2>
+  <p class="sub">Aparece en los correos y en las negociaciones del panel.</p>
+  <label class="lbl" for="aNombre">Nombre</label>
+  <input class="input" id="aNombre" maxlength="80" autocomplete="off">
+  <div class="row">
+    <div><label class="lbl" for="aId">ID en Bitrix</label><input class="input" id="aId" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="84205"></div>
+    <div><label class="lbl" for="aMarca">Marca</label><select class="input" id="aMarca"></select></div>
+  </div>
+  <label class="lbl" for="aCorreo">Correo <span class="opc">(opcional)</span></label>
+  <input class="input" id="aCorreo" type="email" autocomplete="off" autocapitalize="none" placeholder="nombre@empresa.com">
+  <p class="err" id="errAs" role="alert"></p>
+  <div class="foot"><button type="button" class="btn" data-close>Cancelar</button><button type="submit" class="btn primary" id="okAs">Guardar</button></div>
+</form></dialog>
+
+<!-- Equipo -->
+<dialog id="dlgEq" class="wide"><form class="dlg" id="formEq" method="dialog" novalidate>
+  <div class="dlg-head">
+    <h2 id="eqTitle">Nuevo equipo</h2>
+    <p class="sub">Quién recibe el correo de los leads de esta marca.</p>
+  </div>
+  <div class="dlg-body">
+    <div class="row">
+      <div><label class="lbl" for="eMarca">Marca</label><select class="input" id="eMarca"></select></div>
+      <div><label class="lbl" for="eNombre">Nombre del equipo</label><input class="input" id="eNombre" maxlength="60" autocomplete="off" placeholder="Yoselin, Tania y Ana"></div>
+    </div>
+    <label class="lbl">Funnels de este equipo</label>
+    <div class="funnels" id="eFunnels"></div>
+    <p class="hint" id="eFunnelsHint"></p>
+
+    <h3 class="eq-h">Lead decidido o con cita agendada</h3>
+    <label class="lbl">Para</label><div class="ci" id="ciParaCita"></div>
+    <label class="lbl">Con copia</label><div class="ci" id="ciCopiaCita"></div>
+
+    <h3 class="eq-h">Lead para seguimiento</h3>
+    <label class="lbl">Para</label><div class="ci" id="ciParaSeg"></div>
+    <label class="lbl">Con copia</label><div class="ci" id="ciCopiaSeg"></div>
+    <p class="err" id="errEq" role="alert"></p>
+  </div>
+  <div class="dlg-foot"><button type="button" class="btn" data-close>Cancelar</button><button type="submit" class="btn primary" id="okEq">Guardar</button></div>
+</form></dialog>
+
+<!-- Confirmar -->
+<dialog id="dlgConfirm"><div class="dlg">
+  <h2 id="cfTitle"></h2><p class="sub" id="cfText"></p>
+  <div class="foot"><button class="btn" id="cfNo">Cancelar</button><button class="btn danger" id="cfYes">Confirmar</button></div>
+</div></dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="js/equipo.js"></script>
+</body>
+</html>

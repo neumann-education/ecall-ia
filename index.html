@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>ECallIA · Panel de llamadas</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235048E5'/%3E%3Cg fill='white'%3E%3Crect x='7' y='13' width='3' height='6' rx='1.5'/%3E%3Crect x='12' y='9' width='3' height='14' rx='1.5'/%3E%3Crect x='17' y='6' width='3' height='20' rx='1.5'/%3E%3Crect x='22' y='11' width='3' height='10' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -329,6 +329,19 @@ form.d-body .d-actions{margin-top:20px}
 .range-row{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:-18px 0 22px}
 .range-lbl{font-size:13px;color:var(--ink3)}
 @media (max-width:720px){.range-row{justify-content:flex-start;margin:-26px 0 18px;overflow-x:auto}}
+.badge[data-k="cita"]{--bg-e:var(--e-contesto-bg);--fg-e:var(--e-contesto)}
+.badge[data-k="seg"]{--bg-e:var(--e-ocupado-bg);--fg-e:var(--e-ocupado)}
+.badge[data-k="mal"]{--bg-e:var(--e-fallida-bg);--fg-e:var(--e-fallida)}
+.badge[data-k="otro"]{--bg-e:var(--e-buzon-bg);--fg-e:var(--e-buzon)}
+.neg-res{display:flex;flex-wrap:wrap;gap:6px}
+.neg-res .badge{white-space:normal;height:auto;min-height:26px;padding-top:3px;padding-bottom:3px;line-height:1.2}
+@media (max-width:700px){.neg-res{flex-direction:column;align-items:flex-start;max-width:150px}}
+.pre{white-space:pre-line}
+.neg-hist{list-style:none;display:grid;gap:8px;padding:0}
+.neg-hist button{width:100%;text-align:left;padding:11px 14px;border-radius:11px;background:var(--bg);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;font-size:14px;color:var(--ink)}
+.neg-hist button:hover{background:var(--line2)}
+.neg-hist b{font-weight:600}
+.neg-hist span{color:var(--ink3)}
 </style>
 </head>
 <body>
@@ -378,6 +391,7 @@ form.d-body .d-actions{margin-top:20px}
       </div>
       <div class="seg hidden" id="nav" role="group" aria-label="Sección">
         <button data-view="llamadas" aria-pressed="true">Llamadas</button>
+        <button data-view="negociaciones" aria-pressed="false">Negociaciones</button>
         <button data-view="seguimiento" aria-pressed="false">Seguimiento</button>
         <button data-view="ajustes" data-admin aria-pressed="false">Ajustes</button>
         <button data-view="config" data-admin aria-pressed="false">Marcas y números</button>
@@ -393,6 +407,7 @@ form.d-body .d-actions{margin-top:20px}
         <div class="menu hidden" id="meMenu">
           <div class="who"><b id="menuName"></b><span id="menuRole"></span></div>
           <a href="campanas.html" data-admin>Campañas</a>
+          <a href="equipo.html" data-admin>Equipo</a>
           <a href="usuarios.html" data-admin>Usuarios</a>
           <button id="logout">Cerrar sesión</button>
         </div>
@@ -485,6 +500,37 @@ form.d-body .d-actions{margin-top:20px}
         </table>
       </div>
       <div id="segState"></div>
+    </section>
+  </main>
+
+  <main class="wrap hidden" id="viewNegociaciones">
+    <section>
+      <h1 class="greet">Negociaciones</h1>
+      <p class="lede" id="negLede">Lo que se logró con cada lead: el resumen, la cita y el próximo paso. Es un respaldo de lo que el análisis guarda en Bitrix, ordenado por lead y no por llamada.</p>
+    </section>
+    <div id="negBanner"></div>
+    <nav class="funnels seg-chips" id="negChips" aria-label="Filtrar por resultado"></nav>
+    <section class="sheet">
+      <div class="sheet-head">
+        <h2 class="serif">Leads<small id="negCount"></small></h2>
+        <select class="select hidden" id="negAsesora" aria-label="Filtrar por asesora"></select>
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="input" id="negQ" type="search" placeholder="Buscar lead, programa o deal" aria-label="Buscar negociaciones">
+        </div>
+        <button class="btn-ghost" id="negExport">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Exportar CSV
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Lead</th><th class="hide-sm">Programa</th><th>Resultado</th><th class="hide-sm">Cita</th><th class="hide-sm">Asesora</th><th class="r hide-sm">Última llamada</th></tr></thead>
+          <tbody id="negRows"></tbody>
+        </table>
+      </div>
+      <div id="negState"></div>
+      <div class="more hidden" id="negMoreBox"><button class="btn-ghost" id="negMore">Ver más</button></div>
     </section>
   </main>
 
@@ -642,7 +688,8 @@ const state = {
   view: 'llamadas', cfg: { admin: false, numeros: [], funnels: [] }, cfgError: false,
   seg: [], segLoaded: false, segError: false, segMeta: { pausa: false, max: 4 }, segEstado: 'all', segQ: '',
   aj: null, ajDraft: null, ajError: false,
-  detail: {}, animateWave: true, lastFocus: null
+  detail: {}, animateWave: true, lastFocus: null,
+  neg: [], negLoaded: false, negError: false, negMeta: {}, negQ: '', negAccion: 'all', negAsesora: 'all', negVisible: 25
 };
 
 /* ================== API ================== */
@@ -787,6 +834,28 @@ async function demoApi(action, p) {
   if (action === 'listar') {
     return { ok: true, llamadas: demoData().map(r => { const c = { ...r }; delete c.resumen; delete c.transcript; return c; }) };
   }
+  if (action === 'negociaciones_listar') {
+    const filas = demoData().filter(r => r.estado === 'Contestó' && r.transcript).slice(0, 14);
+    const acciones = [['CITA AGENDADA', 'Decidido'], ['HACER SEGUIMIENTO', 'Interesado'], ['HACER SEGUIMIENTO', 'Indeciso'], ['CITA AGENDADA', 'Decidido']];
+    const asesoras = ['Yoselin Rodriguez Gonza', 'Ana Paula Pereyra', 'Gabriela Ordoñez'];
+    const d2 = t => String(new Date(t).getDate()).padStart(2, '0') + '/' + String(new Date(t).getMonth() + 1).padStart(2, '0') + '/' + new Date(t).getFullYear();
+    const neg = filas.map((r, i) => {
+      const [accion, tipo] = acciones[i % acciones.length];
+      const ts = Date.parse(r.fecha_inicio);
+      const llamadas = [{ call_id: r.call_id, fecha: d2(ts), hora: '10:15:00', intento: '1', duracion_seg: r.duracion_seg || 80, accion, tipo_lead: tipo }];
+      if (i % 3 === 0) llamadas.unshift({ call_id: r.call_id, fecha: d2(ts + 86400000), hora: '16:40:00', intento: '2', duracion_seg: 95, accion, tipo_lead: tipo });
+      return {
+        deal_id: r.deal_id || String(1090000 + i), call_id: llamadas[0].call_id, fecha: llamadas[0].fecha, hora: llamadas[0].hora,
+        nombre: String(r.nombre).split(' ')[0], apellido: String(r.nombre).split(' ').slice(1).join(' '), celular: r.telefono,
+        marca: r.marca, funnel_id: r.category_id, funnel: r.funnel, tipo_programa: 'Maestría', programa: r.programa, programa_anuncio: r.programa,
+        resumen: 'El agente llamó para confirmar el interés en ' + r.programa + '.\n- Estudios: Ingeniería de Sistemas, en trámite de título\n- Interés en beca y descuento\n- ' + (accion === 'CITA AGENDADA' ? 'Cita agendada para mañana a las 15:00' : 'Pidió que lo llamen en unos días'),
+        cita: accion === 'CITA AGENDADA' ? d2(ts + 86400000) + ' 15:00 - PE' : '', accion, tipo_lead: tipo,
+        detalle: accion === 'CITA AGENDADA' ? 'La asesora contactará en la fecha y hora agendada para avanzar en la inscripción.' : 'Volver a contactar en 2 días con la información de costos.',
+        asesora: asesoras[i % asesoras.length], grabacion: '', llamadas
+      };
+    });
+    return { ok: true, negociaciones: neg, solo_mias: false, asesora: '' };
+  }
   if (action === 'detalle') {
     const r = demoData().find(x => x.call_id === p.call_id);
     if (!r) return { ok: false, error: 'no_encontrada' };
@@ -924,6 +993,7 @@ function logout(msg) {
   sessionStorage.removeItem(SESSION_KEY);
   state.token = null; state.user = null; state.rows = []; state.loaded = false; state.detail = {};
   state.cfg = { admin: false, numeros: [], funnels: [] }; state.cfgError = false; state.view = 'llamadas'; FUNNELS = {};
+  state.neg = []; state.negLoaded = false; state.negQ = ''; state.negAccion = 'all'; state.negAsesora = 'all'; state.negVisible = 25;
   state.seg = []; state.segLoaded = false; state.segEstado = 'all'; state.segQ = ''; state.aj = null; state.ajDraft = null;
   state.funnel = 'all'; state.estado = 'all'; state.dir = 'all'; state.q = '';
   closeDrawer();
@@ -1302,6 +1372,7 @@ $('#nav').addEventListener('click', e => { const b = e.target.closest('button[da
 $('#more').addEventListener('click', () => { state.visible += 25; renderTable(); });
 $('#refresh').addEventListener('click', () => {
   if (state.view === 'seguimiento') loadSeg(false);
+  else if (state.view === 'negociaciones') loadNeg(false);
   else if (state.view === 'ajustes') loadAjustes();
   else loadData(false);
 });
@@ -1339,6 +1410,178 @@ $('#export').addEventListener('click', () => {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   toast(`Se exportaron ${rows.length} llamadas`);
+});
+
+/* ================== Negociaciones ================== */
+const negKey = n => n.deal_id || n.call_id;
+const negNombre = n => [n.nombre, n.apellido].filter(Boolean).join(' ') || 'Sin nombre';
+function negTipo(accion) {
+  const t = String(accion || '').toLowerCase();
+  if (/sin resolver|no interesad/.test(t)) return 'mal';
+  if (/cita|resuelto/.test(t)) return 'cita';
+  if (/seguimiento/.test(t)) return 'seg';
+  return 'otro';
+}
+function leadTipo(t) {
+  t = String(t || '').toLowerCase();
+  if (/^no /.test(t)) return 'mal';
+  if (/decid/.test(t)) return 'cita';
+  if (/interes/.test(t)) return 'seg';
+  return 'otro';
+}
+const negBadge = (txt, k) => txt ? `<span class="badge" data-k="${k}">${esc(txt)}</span>` : '';
+// "12/11/2026" + "15:30:00" -> fecha
+function negTs(n) {
+  const m = String(n.fecha || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return 0;
+  const h = String(n.hora || '00:00:00').split(':');
+  return new Date(+m[3], +m[2] - 1, +m[1], +h[0] || 0, +h[1] || 0).getTime();
+}
+
+async function loadNeg(silent) {
+  if (!silent) { state.negLoaded = false; renderNeg(); }
+  try {
+    const r = await api('negociaciones_listar');
+    if (!r || !r.ok) throw new Error((r && r.error) || 'error');
+    state.neg = r.negociaciones || [];
+    state.negMeta = { soloMias: !!r.solo_mias, asesora: r.asesora || '' };
+    state.negError = false;
+  } catch (e) { if (!silent || !state.negLoaded) state.negError = true; }
+  state.negLoaded = true;
+  if (state.view === 'negociaciones') renderNeg();
+}
+
+function negFiltered() {
+  const q = state.negQ.trim().toLowerCase();
+  return state.neg.filter(n => {
+    if (state.negAccion !== 'all' && (n.accion || 'Sin acción') !== state.negAccion) return false;
+    if (state.negAsesora !== 'all' && (n.asesora || 'Sin asesora') !== state.negAsesora) return false;
+    if (!q) return true;
+    return [negNombre(n), n.celular, n.programa, n.deal_id, n.asesora, n.marca].some(x => String(x || '').toLowerCase().includes(q));
+  });
+}
+
+function renderNeg() {
+  let banner = '';
+  if (state.negError) banner = '<div class="banner" role="alert">No pudimos cargar las negociaciones. Revisa que el backend esté actualizado (Code.gs) e inténtalo otra vez. <button id="negRetry">Reintentar</button></div>';
+  else if (state.negMeta.soloMias) banner = `<div class="banner pause" role="status">Estás viendo solo las negociaciones de <b>${esc(state.negMeta.asesora)}</b>.</div>`;
+  $('#negBanner').innerHTML = banner;
+  const rt = $('#negRetry'); if (rt) rt.addEventListener('click', () => loadNeg(false));
+
+  const cnt = {};
+  state.neg.forEach(n => { const a = n.accion || 'Sin acción'; cnt[a] = (cnt[a] || 0) + 1; });
+  const acciones = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]);
+  const colores = { cita: 'var(--e-contesto)', seg: 'var(--e-ocupado)', mal: 'var(--e-fallida)', otro: 'var(--e-buzon)' };
+  let ch = `<button class="fchip" data-a="all" aria-pressed="${state.negAccion === 'all'}">Todos <em>${state.neg.length}</em></button>`;
+  acciones.forEach(a => { ch += `<button class="fchip" data-a="${esc(a)}" aria-pressed="${state.negAccion === a}" style="--c:${colores[negTipo(a)]}"><i></i>${esc(a)} <em>${cnt[a]}</em></button>`; });
+  $('#negChips').innerHTML = ch;
+
+  const asesoras = [...new Set(state.neg.map(n => n.asesora || 'Sin asesora'))].sort();
+  const sel = $('#negAsesora');
+  sel.classList.toggle('hidden', state.negMeta.soloMias || asesoras.length < 2);
+  sel.innerHTML = '<option value="all">Todas las asesoras</option>' + asesoras.map(a => `<option value="${esc(a)}"${state.negAsesora === a ? ' selected' : ''}>${esc(a)}</option>`).join('');
+
+  const body = $('#negRows'), box = $('#negState');
+  if (!state.negLoaded) {
+    body.innerHTML = Array(5).fill('<tr class="skel-row"><td><div class="skel" style="width:70%"></div></td><td class="hide-sm"><div class="skel" style="width:80%"></div></td><td><div class="skel" style="width:90px"></div></td><td class="hide-sm"><div class="skel" style="width:60%"></div></td><td class="hide-sm"><div class="skel" style="width:60%"></div></td><td><div class="skel" style="width:70px"></div></td></tr>').join('');
+    box.innerHTML = ''; $('#negCount').textContent = ''; $('#negMoreBox').classList.add('hidden');
+    return;
+  }
+  const rows = negFiltered();
+  $('#negCount').textContent = rows.length;
+  body.innerHTML = rows.slice(0, state.negVisible).map(n => {
+    const f = funnelOf({ category_id: n.funnel_id, funnel: n.funnel, marca: n.marca });
+    const ts = negTs(n);
+    return `<tr data-k="${esc(negKey(n))}" tabindex="0">
+      <td><div class="who"><span class="avatar" style="--c:${f.color}">${esc(initials(negNombre(n)))}</span><div><div class="n">${esc(negNombre(n))}</div><div class="s">${esc(n.celular || '—')}</div></div></div></td>
+      <td class="prog hide-sm" title="${esc(n.programa)}">${esc(n.programa || '—')}<div class="sub-in">${esc(f.name)}</div></td>
+      <td><div class="neg-res">${negBadge(n.accion, negTipo(n.accion))}${negBadge(n.tipo_lead, leadTipo(n.tipo_lead))}</div></td>
+      <td class="hide-sm">${n.cita ? esc(n.cita) : '<span class="muted">—</span>'}</td>
+      <td class="hide-sm">${esc(n.asesora || '—')}</td>
+      <td class="r hide-sm">${ts ? esc(fmtWhen(ts)) : '—'}${n.llamadas && n.llamadas.length > 1 ? `<div class="sub-in">${n.llamadas.length} llamadas</div>` : ''}</td>
+    </tr>`;
+  }).join('');
+  $('#negMoreBox').classList.toggle('hidden', rows.length <= state.negVisible);
+  if (!rows.length) {
+    const filtros = state.negQ || state.negAccion !== 'all' || state.negAsesora !== 'all';
+    box.innerHTML = filtros
+      ? '<div class="state"><b>No hay negociaciones con estos filtros</b>Prueba con otra búsqueda o quita un filtro.</div>'
+      : '<div class="state"><b>Todavía no hay negociaciones</b>Cuando se analice una llamada contestada, aparecerá aquí con su resumen.</div>';
+  } else box.innerHTML = '';
+}
+
+function negDrawerHTML(n) {
+  const f = funnelOf({ category_id: n.funnel_id, funnel: n.funnel, marca: n.marca });
+  const ts = negTs(n);
+  const llamadas = (n.llamadas || []).map(c => {
+    const dur = Number(c.duracion_seg) || 0;
+    return `<li><button data-call="${esc(c.call_id)}"><b>Llamada ${esc(c.intento || '')}</b><span>${esc(c.fecha)} ${esc(String(c.hora).slice(0, 5))}${dur ? ' · ' + mmss(dur) : ''}</span>${negBadge(c.accion, negTipo(c.accion))}</button></li>`;
+  }).join('');
+  return `<div class="d-top"><span class="fun" style="--c:${f.color}"><i></i>${esc(f.name)}</span>
+    <button class="icon-btn" id="dClose" aria-label="Cerrar detalle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="d-body">
+      <h2 class="d-name serif">${esc(negNombre(n))}</h2>
+      <div class="d-sub"><span>${esc(n.celular || '—')}</span>${negBadge(n.accion, negTipo(n.accion))}${negBadge(n.tipo_lead, leadTipo(n.tipo_lead))}</div>
+      <dl class="d-meta">
+        <div><dt>Programa</dt><dd>${esc(n.programa || '—')}</dd></div>
+        <div><dt>Tipo de programa</dt><dd>${esc(n.tipo_programa || '—')}</dd></div>
+        <div><dt>Cita agendada</dt><dd>${esc(n.cita || '—')}</dd></div>
+        <div><dt>Asesora</dt><dd>${esc(n.asesora || '—')}</dd></div>
+        <div><dt>Marca</dt><dd>${esc(n.marca || '—')}</dd></div>
+        <div><dt>Deal en Bitrix</dt><dd>${esc(n.deal_id || '—')}</dd></div>
+        <div><dt>Última llamada</dt><dd>${ts ? esc(fmtLong(ts)) : '—'}</dd></div>
+        <div><dt>Llamadas analizadas</dt><dd>${(n.llamadas || []).length}</dd></div>
+      </dl>
+      <div class="d-sec"><h3 class="serif">Resumen</h3><p class="pre">${esc(n.resumen || 'Sin resumen.')}</p></div>
+      ${n.detalle ? `<div class="d-sec"><h3 class="serif">Próximo paso</h3><p class="pre">${esc(n.detalle)}</p></div>` : ''}
+      <div class="d-sec"><h3 class="serif">Historial de llamadas</h3><ul class="neg-hist">${llamadas}</ul></div>
+      <div class="d-actions"><button class="main" id="nVer">Ver la última llamada</button><button class="alt" id="nCopy">Copiar resumen</button></div>
+    </div>`;
+}
+
+function openNeg(key, fromEl) {
+  const n = state.neg.find(x => negKey(x) === key);
+  if (!n) return;
+  const dr = $('#drawer');
+  state.lastFocus = fromEl || document.activeElement;
+  state.openId = 'neg:' + key;
+  dr.innerHTML = negDrawerHTML(n);
+  dr.setAttribute('aria-label', 'Detalle de la negociación');
+  dr.classList.add('open'); $('#scrim').classList.add('open'); dr.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  $('#dClose').addEventListener('click', closeDrawer);
+  $('#nVer').addEventListener('click', () => openDrawer(n.call_id));
+  $('#nCopy').addEventListener('click', () => copyText([negNombre(n), n.programa, n.cita ? 'Cita: ' + n.cita : '', n.resumen, n.detalle ? 'Próximo paso: ' + n.detalle : ''].filter(Boolean).join('\n'), 'Resumen copiado'));
+  $$('[data-call]', dr).forEach(b => b.addEventListener('click', () => openDrawer(b.dataset.call)));
+  $('#dClose').focus();
+}
+
+$('#negChips').addEventListener('click', e => { const b = e.target.closest('.fchip'); if (b) { state.negAccion = b.dataset.a; state.negVisible = 25; renderNeg(); } });
+$('#negAsesora').addEventListener('change', e => { state.negAsesora = e.target.value; state.negVisible = 25; renderNeg(); });
+let negTimer;
+$('#negQ').addEventListener('input', e => { clearTimeout(negTimer); negTimer = setTimeout(() => { state.negQ = e.target.value; state.negVisible = 25; renderNeg(); }, 160); });
+$('#negMore').addEventListener('click', () => { state.negVisible += 25; renderNeg(); });
+$('#negRows').addEventListener('click', e => { const tr = e.target.closest('tr[data-k]'); if (tr) openNeg(tr.dataset.k, tr); });
+$('#negRows').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const tr = e.target.closest('tr[data-k]');
+  if (tr) { e.preventDefault(); openNeg(tr.dataset.k, tr); }
+});
+$('#negExport').addEventListener('click', () => {
+  const rows = negFiltered();
+  if (!rows.length) { toast('No hay negociaciones para exportar'); return; }
+  const cols = ['Fecha', 'Hora', 'Lead', 'Teléfono', 'Marca', 'Funnel', 'Programa', 'Tipo de lead', 'Acción', 'Cita', 'Asesora', 'Deal', 'Resumen', 'Próximo paso', 'Llamadas'];
+  const cell = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const lines = [cols.map(cell).join(',')].concat(rows.map(n => [
+    n.fecha, n.hora, negNombre(n), n.celular, n.marca, n.funnel, n.programa, n.tipo_lead, n.accion, n.cita, n.asesora, n.deal_id, n.resumen, n.detalle, (n.llamadas || []).length
+  ].map(cell).join(',')));
+  const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `negociaciones-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toast(`Se exportaron ${rows.length} negociaciones`);
 });
 
 /* ================== Detalle de la llamada ================== */
@@ -1515,6 +1758,7 @@ function setView(v) {
   state.view = v;
   $('#viewLlamadas').classList.toggle('hidden', v !== 'llamadas');
   $('#viewSeguimiento').classList.toggle('hidden', v !== 'seguimiento');
+  $('#viewNegociaciones').classList.toggle('hidden', v !== 'negociaciones');
   $('#viewAjustes').classList.toggle('hidden', v !== 'ajustes');
   $('#viewConfig').classList.toggle('hidden', v !== 'config');
   $('#range').classList.toggle('hidden', v !== 'llamadas');
@@ -1522,6 +1766,7 @@ function setView(v) {
   closeDrawer();
   if (v === 'config') renderConfig();
   else if (v === 'seguimiento') { renderSeg(); loadSeg(state.segLoaded); }
+  else if (v === 'negociaciones') { renderNeg(); loadNeg(state.negLoaded); }
   else if (v === 'ajustes') { renderAjustes(); loadAjustes(); }
   else if (state.loaded) renderWave(false);
 }
@@ -2071,6 +2316,7 @@ setInterval(() => {
   if (!state.token || document.visibilityState !== 'visible') return;
   loadData(true);
   if (state.view === 'seguimiento') loadSeg(true);
+  if (state.view === 'negociaciones') loadNeg(true);
 }, 90000);
 
 if (loadSession()) start(); else $('#u').focus();
