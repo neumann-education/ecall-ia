@@ -586,14 +586,14 @@ form.d-body .d-actions{margin-top:20px}
 
 <noscript><p style="padding:24px">Este panel necesita JavaScript para funcionar.</p></noscript>
 
+<script src="js/config.js"></script>
 <script>
 (() => {
 'use strict';
 
 /* ================== Configuración ================== */
-const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbwd2RJXaQ4sT-jCET3YyLSf7vAUSZu9ebTaegLsNTt-Mtf5B6tTl2jrsQ2Pyxp42d31HA/exec'
-};
+// La dirección del Apps Script se edita solo en js/config.js
+const CONFIG = { API_URL: (window.APP && window.APP.API_URL) || '' };
 const DEMO = !CONFIG.API_URL;
 
 // Los funnels (código de Bitrix -> nombre) vienen de la hoja "Funnels"; aquí solo se les da color.
