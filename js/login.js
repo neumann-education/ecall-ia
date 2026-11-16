@@ -38,7 +38,7 @@
     if (!u || !p) { showError(MSG.faltan_datos); return; }
     var btn = $('#go'); btn.disabled = true; btn.textContent = 'Entrando…';
     try {
-      var r = await Auth.api('login', { usuario: u, password: p });
+      var r = await Auth.api('login', { usuario: u, password: p, recordar: $('#remember').checked });
       if (r && r.ok) {
         Auth.save(r, $('#remember').checked);
         location.replace(next);

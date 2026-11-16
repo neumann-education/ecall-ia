@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Campañas · ECallIA - Panel de llamadas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+
+<!-- Nada de esta página se muestra hasta que el servidor confirma que eres administrador -->
+<div class="gate" id="gate"><div class="gate-card"><div class="spin"></div><p>Verificando acceso…</p></div></div>
+
+<div id="app" hidden>
+  <header class="topbar"><div class="bar">
+    <a class="brand" href="index.html">ECallIA</a>
+    <nav class="tabs" aria-label="Secciones">
+      <a href="index.html">Llamadas</a>
+      <a href="campanas.html" aria-current="page">Campañas</a>
+      <a href="usuarios.html">Usuarios</a>
+    </nav>
+    <div class="bar-right">
+      <button class="icon-btn" id="themeBtn" aria-label="Cambiar tema" title="Cambiar tema">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <div class="me">
+        <button class="avatar-btn" id="meBtn" aria-haspopup="true" aria-expanded="false"><span class="avatar" id="meAv"></span><span class="nm" id="meNm"></span></button>
+        <div class="menu" id="meMenu" hidden>
+          <div class="who"><b id="meName"></b><span>Administrador</span></div>
+          <a href="index.html">Ir al panel de ECallIA</a>
+          <button id="logoutBtn">Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </div></header>
+
+  <main class="wrap">
+    <h1 class="title">Campañas</h1>
+    <p class="lede">Llamadas masivas a partir de un CSV, sin pasar por Bitrix. Cada campaña usa un número y el agente de ese número, y reintenta igual que los leads de Bitrix.</p>
+
+    <div class="avisos" id="avisos"></div>
+
+    <div class="tools">
+      <div class="chips" id="chips" role="group" aria-label="Filtrar campañas">
+        <button class="chip" data-f="all" aria-pressed="true">Todas</button>
+        <button class="chip" data-f="curso" aria-pressed="false">En curso</button>
+        <button class="chip" data-f="cerradas" aria-pressed="false">Cerradas</button>
+      </div>
+      <span class="grow"></span>
+      <button class="btn primary" id="newBtn">+ Nueva campaña</button>
+    </div>
+
+    <div class="card"><div class="scroll">
+      <table class="camp-table">
+        <thead><tr><th>Campaña</th><th>Estado</th><th>Avance</th><th class="col-creada">Creada</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden></div>
+    </div></div>
+    <p class="note">Las llamadas se hacen solo dentro del horario y con los reintentos que tengas en Ajustes. Los números que estén en la lista de “No llamar” de esa marca se saltan. Los resultados de cada llamada también aparecen en Llamadas, con el nombre de la campaña como funnel.</p>
+  </main>
+</div>
+
+<!-- Nueva campaña -->
+<dialog id="dlgNueva" class="wide"><form class="dlg" id="form" method="dialog" novalidate>
+  <div class="dlg-head">
+    <h2>Nueva campaña</h2>
+    <p class="sub">Sube un CSV con los contactos. Se crea lista para iniciar; no llama hasta que tú la inicies.</p>
+  </div>
+
+  <div class="dlg-body" id="dlgBody">
+    <label class="lbl" for="fNombre">Nombre de la campaña</label>
+    <input class="input" id="fNombre" maxlength="60" autocomplete="off" placeholder="Ej.: Feria de noviembre">
+
+    <div class="row">
+      <div>
+        <label class="lbl" for="fNumero">Número de salida</label>
+        <select class="input" id="fNumero"></select>
+      </div>
+      <div>
+        <label class="lbl" for="fPrefijo">Código de país <span class="opc">(opcional)</span></label>
+        <input class="input" id="fPrefijo" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="51">
+      </div>
+    </div>
+    <p class="hint" id="fNumeroHint"></p>
+    <p class="hint">El código de país se agrega a los números que vengan sin él (por ejemplo 900 000 000 → +51 900 000 000).</p>
+
+    <label class="lbl">Archivo CSV</label>
+    <label class="drop" id="drop" for="fArchivo"><b>Elige el archivo o arrástralo aquí</b>Formato CSV, con una fila de títulos. Si tienes Excel, guárdalo como “CSV UTF-8”.<input type="file" id="fArchivo" accept=".csv,.txt,text/csv,text/plain"></label>
+    <div class="drop-file" id="dropFile" hidden><div class="df-txt"><b id="dfName"></b><span id="dfInfo"></span></div><button type="button" class="btn sm" id="dfQuitar">Cambiar</button></div>
+
+    <div id="mapa" class="mapa" hidden>
+      <div class="row">
+        <div><label class="lbl" for="mTel">Columna del teléfono</label><select class="input" id="mTel"></select></div>
+        <div><label class="lbl" for="mNom">Columna del nombre <span class="opc">(opcional)</span></label><select class="input" id="mNom"></select></div>
+      </div>
+      <div class="row">
+        <div><label class="lbl" for="mPro">Columna del programa <span class="opc">(opcional)</span></label><select class="input" id="mPro"></select></div>
+        <div></div>
+      </div>
+      <div id="extrasBox">
+        <label class="lbl">Otras columnas que el bot puede usar como variables</label>
+        <div class="funnels" id="extras"></div>
+        <p class="hint">El bot las recibe con el nombre que aparece en cada una. Siempre recibe también el nombre, el programa y el celular.</p>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="preview"><table><thead id="pvHead"></thead><tbody id="pvBody"></tbody></table></div>
+    </div>
+
+    <p class="err" id="formErr" role="alert"></p>
+    <div class="subida" id="subida" hidden>
+      <div class="bar-prog"><i class="p-ok" id="upBar" style="width:0"></i></div>
+      <p id="upTxt"></p>
+    </div>
+  </div>
+
+  <div class="dlg-foot" id="formFoot">
+    <span class="foot-hint" id="okHint"></span>
+    <button type="button" class="btn" data-close>Cancelar</button>
+    <button type="submit" class="btn primary" id="formOk" disabled>Crear campaña</button>
+  </div>
+</form></dialog>
+
+<!-- Resultado de la carga -->
+<dialog id="dlgResultado"><div class="dlg">
+  <h2 id="rsTitle"></h2>
+  <p class="sub" id="rsSub"></p>
+  <div class="stats" id="rsStats"></div>
+  <div class="lista-rech" id="rsLista" hidden></div>
+  <div class="foot"><button class="btn primary" data-close>Entendido</button></div>
+</div></dialog>
+
+<!-- Confirmar -->
+<dialog id="dlgConfirm"><div class="dlg">
+  <h2 id="cfTitle"></h2><p class="sub" id="cfText"></p>
+  <div class="foot"><button class="btn" id="cfNo">Cancelar</button><button class="btn primary" id="cfYes">Confirmar</button></div>
+</div></dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="js/campanas.js"></script>
+</body>
+</html>

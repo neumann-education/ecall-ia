@@ -59,7 +59,7 @@
     return '<span class="badge ok" title="' + esc(u.accesos_enviados) + '">Enviado ' + esc(p[0].slice(0, 5)) + '</span>';
   }
   function mensaje(u) {
-    return 'Hola ' + u.nombre + ', estos son tus accesos al panel de llamadas:\n\nPanel: ' + PANEL_URL + '\nUsuario: ' + u.usuario +
+    return 'Hola ' + u.nombre + ', estos son tus accesos a ECallIA - Panel de llamadas:\n\nPanel: ' + PANEL_URL + '\nUsuario: ' + u.usuario +
       '\nContraseña: ' + u.password + '\n\nEsta contraseña es fija: guárdala y no la compartas. Si la olvidas, pídesela a un administrador.';
   }
   function setBusy(btn, busy, txt) {
@@ -105,7 +105,7 @@
         '<td><div class="person">' + avatar(u.nombre) + '<div><b>' + esc(u.nombre) + (soyYo ? ' <span>(tú)</span>' : '') + '</b><span>' + esc(u.usuario) + (u.correo ? ' · ' + esc(u.correo) : '') + '</span></div></div></td>' +
         '<td><span class="badge ' + (u.rol === 'admin' ? 'admin' : '') + '">' + (u.rol === 'admin' ? 'Administrador' : 'Usuario') + '</span></td>' +
         '<td class="fun">' + esc(funnelsTexto(u)) + '</td>' +
-        '<td><div class="clave"><code data-pw="' + esc(u.password) + '">••••••••••••</code>' +
+        '<td><div class="clave"><code data-pw="' + esc(u.password) + '">••••••••••</code>' +
           '<button class="icon-btn" data-a="ver" aria-label="Mostrar contraseña" title="Mostrar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>' +
           '<button class="icon-btn" data-a="copiar" aria-label="Copiar contraseña" title="Copiar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div></td>' +
         '<td>' + enviadoTexto(u) + '</td>' +
@@ -200,12 +200,13 @@
     $('#formTitle').textContent = u ? 'Editar usuario' : 'Nuevo usuario';
     $('#formSub').textContent = u ? 'La contraseña no cambia al guardar.' : 'Al guardar se genera su contraseña automáticamente.';
     $('#fNombre').value = u ? u.nombre : ''; $('#fUsuario').value = u ? u.usuario : ''; $('#fUsuario').readOnly = !!u;
+    delete $('#fUsuario').dataset.manual;
     $('#fRol').value = u ? u.rol : 'usuario';
     $('#fCorreo').value = u ? u.correo : ''; $('#fWa').value = u ? u.whatsapp : '';
     $('#fActivoBox').hidden = !u; $('#fActivo').checked = u ? u.activo === 'Sí' : true;
     pintarFunnels(u ? (u.funnels === 'ALL' ? ['ALL'] : u.funnels.split(',')) : []);
     actualizarRol(); $('#formErr').textContent = ''; $('#formOk').textContent = u ? 'Guardar cambios' : 'Crear usuario';
-    $('#dlgForm').showModal(); (u ? $('#fNombre') : $('#fNombre')).focus();
+    $('#dlgForm').showModal(); $('#fNombre').focus();
   }
   $('#newBtn').addEventListener('click', function () { abrirForm(null); });
   // El usuario se sugiere a partir del nombre mientras se escribe (solo al crear)
@@ -252,7 +253,7 @@
   }
   async function registrarEnvio(canal) {
     var r = await Auth.api('usuarios_enviar', { usuario: accU.usuario, canal: canal, panel_url: PANEL_URL });
-    if (r.ok) { var m = state.users.filter(function (x) { return x.usuario === accU.usuario; })[0]; if (m) { await cargar(); } }
+    if (r.ok) await cargar();
     return r;
   }
   $('#sendMail').addEventListener('click', async function () {
