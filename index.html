@@ -342,6 +342,16 @@ form.d-body .d-actions{margin-top:20px}
 .neg-hist button:hover{background:var(--line2)}
 .neg-hist b{font-weight:600}
 .neg-hist span{color:var(--ink3)}
+.range-row{flex-wrap:wrap}
+.range-custom{display:flex;gap:8px;flex-wrap:wrap}
+.dl{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3)}
+.date-in{height:34px;border-radius:9px;border:1px solid transparent;background:var(--sheet);padding:0 10px;font:inherit;font-size:13.5px;color:var(--ink)}
+.date-in:focus{outline:2px solid var(--accent)}
+.neg-filtros{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:0 24px 16px}
+.neg-filtros .select,.neg-filtros .date-in{background:var(--bg);height:38px}
+.neg-filtros .dl{gap:7px}
+.neg-filtros .btn-ghost{height:38px}
+@media (max-width:700px){.neg-filtros{padding:0 18px 14px}.neg-filtros .select{flex:1 1 140px}}
 </style>
 </head>
 <body>
@@ -423,6 +433,11 @@ form.d-body .d-actions{margin-top:20px}
         <button data-range="7" aria-pressed="false">7 días</button>
         <button data-range="30" aria-pressed="true">30 días</button>
         <button data-range="todo" aria-pressed="false">Todo</button>
+        <button data-range="custom" aria-pressed="false">Personalizado</button>
+      </div>
+      <div class="range-custom hidden" id="rangeCustom">
+        <label class="dl">Desde <input type="date" class="date-in" id="rFrom" aria-label="Desde"></label>
+        <label class="dl">Hasta <input type="date" class="date-in" id="rTo" aria-label="Hasta"></label>
       </div>
     </div>
     <section>
@@ -448,7 +463,7 @@ form.d-body .d-actions{margin-top:20px}
         <h2 class="serif">Llamadas<small id="count"></small></h2>
         <div class="search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input class="input" id="q" type="search" placeholder="Buscar por nombre, teléfono o programa" aria-label="Buscar llamadas">
+          <input class="input" id="q" type="search" placeholder="Nombre, teléfono o ID de deal" aria-label="Buscar llamadas">
         </div>
         <select class="select" id="estado" aria-label="Filtrar por estado">
           <option value="all">Todos los estados</option>
@@ -513,15 +528,23 @@ form.d-body .d-actions{margin-top:20px}
     <section class="sheet">
       <div class="sheet-head">
         <h2 class="serif">Leads<small id="negCount"></small></h2>
-        <select class="select hidden" id="negAsesora" aria-label="Filtrar por asesora"></select>
         <div class="search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input class="input" id="negQ" type="search" placeholder="Buscar lead, programa o deal" aria-label="Buscar negociaciones">
+          <input class="input" id="negQ" type="search" placeholder="Nombre, teléfono o ID de deal" aria-label="Buscar negociaciones">
         </div>
         <button class="btn-ghost" id="negExport">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
           Exportar CSV
         </button>
+      </div>
+      <div class="neg-filtros" id="negFiltros">
+        <label class="dl">Desde <input type="date" class="date-in" id="negDesde" aria-label="Desde"></label>
+        <label class="dl">Hasta <input type="date" class="date-in" id="negHasta" aria-label="Hasta"></label>
+        <select class="select" id="negMarca" aria-label="Filtrar por marca"></select>
+        <select class="select" id="negFunnel" aria-label="Filtrar por funnel"></select>
+        <select class="select" id="negTipo" aria-label="Filtrar por tipo de lead"></select>
+        <select class="select hidden" id="negAsesora" aria-label="Filtrar por asesora"></select>
+        <button class="btn-ghost hidden" id="negLimpiar">Quitar filtros</button>
       </div>
       <div class="table-wrap">
         <table>
@@ -614,6 +637,9 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const pad = n => String(n).padStart(2, '0');
 const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const safeUrl = u => /^https?:\/\//i.test(String(u || '')) ? String(u) : '';
+const parseDay = str => { const p = String(str).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+const dayStr = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const fmtDay = str => { const d = parseDay(str); return d.getDate() + ' ' + MESES[d.getMonth()] + ' ' + d.getFullYear(); };
 const startOfDay = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 
@@ -684,12 +710,14 @@ const state = {
   token: null, user: null,
   rows: [], loaded: false, loading: false,
   range: localStorage.getItem('llamadas_rango') || '30',
+  rFrom: localStorage.getItem('llamadas_desde') || '', rTo: localStorage.getItem('llamadas_hasta') || '',
   funnel: 'all', estado: 'all', dir: 'all', q: '', visible: 25,
   view: 'llamadas', cfg: { admin: false, numeros: [], funnels: [] }, cfgError: false,
   seg: [], segLoaded: false, segError: false, segMeta: { pausa: false, max: 4 }, segEstado: 'all', segQ: '',
   aj: null, ajDraft: null, ajError: false,
   detail: {}, animateWave: true, lastFocus: null,
-  neg: [], negLoaded: false, negError: false, negMeta: {}, negQ: '', negAccion: 'all', negAsesora: 'all', negVisible: 25
+  neg: [], negLoaded: false, negError: false, negMeta: {}, negQ: '', negAccion: 'all', negAsesora: 'all', negVisible: 25,
+  negDesde: '', negHasta: '', negMarca: 'all', negFunnel: 'all', negTipo: 'all'
 };
 
 /* ================== API ================== */
@@ -994,6 +1022,7 @@ function logout(msg) {
   state.token = null; state.user = null; state.rows = []; state.loaded = false; state.detail = {};
   state.cfg = { admin: false, numeros: [], funnels: [] }; state.cfgError = false; state.view = 'llamadas'; FUNNELS = {};
   state.neg = []; state.negLoaded = false; state.negQ = ''; state.negAccion = 'all'; state.negAsesora = 'all'; state.negVisible = 25;
+  state.negDesde = ''; state.negHasta = ''; state.negMarca = 'all'; state.negFunnel = 'all'; state.negTipo = 'all';
   state.seg = []; state.segLoaded = false; state.segEstado = 'all'; state.segQ = ''; state.aj = null; state.ajDraft = null;
   state.funnel = 'all'; state.estado = 'all'; state.dir = 'all'; state.q = '';
   closeDrawer();
@@ -1085,7 +1114,7 @@ function start() {
   $('#meName').textContent = nom.split(' ')[0];
   $('#menuName').textContent = nom;
   $('#menuRole').textContent = (state.user && state.user.rol === 'admin') ? 'Administrador' : 'Usuario';
-  $$('#range button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.range === state.range)));
+  syncRango();
   state.animateWave = true;
   const esAdmin = !!(state.user && state.user.rol === 'admin');
   $('#nav').classList.remove('hidden');
@@ -1135,9 +1164,15 @@ function rangeStart() {
   if (state.range === 'hoy') return startOfDay(now).getTime();
   if (state.range === '7') return startOfDay(addDays(now, -6)).getTime();
   if (state.range === '30') return startOfDay(addDays(now, -29)).getTime();
+  if (state.range === 'custom' && state.rFrom) return parseDay(state.rFrom).getTime();
   return 0;
 }
-const inRangeRows = () => { const s = rangeStart(); return state.rows.filter(r => r.ts >= s); };
+// Fin del rango (sin incluir): solo el rango personalizado con fecha "Hasta" tiene fin
+function rangeEnd() {
+  if (state.range === 'custom' && state.rTo) return addDays(parseDay(state.rTo), 1).getTime();
+  return Infinity;
+}
+const inRangeRows = () => { const s = rangeStart(), e = rangeEnd(); return state.rows.filter(r => r.ts >= s && r.ts < e); };
 const scopeRows = () => inRangeRows().filter(r => state.funnel === 'all' || funnelOf(r).id === state.funnel);
 function tableRows() {
   const q = state.q.trim().toLowerCase();
@@ -1169,9 +1204,15 @@ function renderGreeting() {
   const n = rows.length, c = rows.filter(r => r.estado === 'Contestó').length;
   if (!state.loaded) { $('#lede').textContent = 'Cargando tus llamadas…'; return; }
   if (!n) { $('#lede').textContent = 'Aún no hay llamadas en este periodo.'; return; }
-  const pre = state.range === 'hoy' ? 'Hoy se han hecho'
-    : state.range === 'todo' ? 'En total se han hecho'
-    : `En los últimos ${state.range} días se hicieron`;
+  let pre;
+  if (state.range === 'hoy') pre = 'Hoy se han hecho';
+  else if (state.range === 'todo') pre = 'En total se han hecho';
+  else if (state.range === 'custom') {
+    if (state.rFrom && state.rTo) pre = state.rFrom === state.rTo ? `El ${fmtDay(state.rFrom)} se hicieron` : `Del ${fmtDay(state.rFrom)} al ${fmtDay(state.rTo)} se hicieron`;
+    else if (state.rFrom) pre = `Desde el ${fmtDay(state.rFrom)} se han hecho`;
+    else if (state.rTo) pre = `Hasta el ${fmtDay(state.rTo)} se hicieron`;
+    else pre = 'En total se han hecho';
+  } else pre = `En los últimos ${state.range} días se hicieron`;
   const fn = state.funnel !== 'all' ? ' en ' + funnelLabel(state.funnel) : '';
   $('#lede').textContent = `${pre} ${n} ${n === 1 ? 'llamada' : 'llamadas'}${fn}, de las cuales ${c} ${c === 1 ? 'fue contestada' : 'fueron contestadas'}.`;
 }
@@ -1179,18 +1220,22 @@ function renderGreeting() {
 /* ---- Onda de actividad ---- */
 function buildBins(rows) {
   const now = new Date(), bins = [];
-  if (state.range === 'hoy') {
-    const d0 = startOfDay(now).getTime();
+  // Un solo día (hoy, o un día elegido en el rango personalizado) se ve por horas
+  const unDia = state.range === 'custom' && state.rFrom && state.rFrom === state.rTo;
+  if (state.range === 'hoy' || unDia) {
+    const d0 = (unDia ? parseDay(state.rFrom) : startOfDay(now)).getTime();
     for (let h = 0; h < 24; h++) bins.push({ s: d0 + h * 3600e3, e: d0 + (h + 1) * 3600e3, label: pad(h) + ':00' });
   } else {
     let start;
     if (state.range === '7') start = startOfDay(addDays(now, -6));
     else if (state.range === '30') start = startOfDay(addDays(now, -29));
+    else if (state.range === 'custom' && state.rFrom) start = parseDay(state.rFrom);
     else {
       const ts = rows.map(r => r.ts).filter(Boolean);
       start = startOfDay(ts.length ? new Date(Math.min(...ts)) : now);
     }
-    const days = Math.round((startOfDay(now) - start) / 864e5) + 1;
+    const ultimo = state.range === 'custom' && state.rTo ? parseDay(state.rTo) : startOfDay(now);
+    const days = Math.max(1, Math.round((ultimo - start) / 864e5) + 1);
     const step = days > 90 ? 7 : 1;
     for (let i = 0; i < days; i += step) {
       const s = addDays(start, i);
@@ -1348,10 +1393,25 @@ $('#range').addEventListener('click', e => {
   if (!b) return;
   state.range = b.dataset.range;
   localStorage.setItem('llamadas_rango', state.range);
-  $$('#range button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  if (state.range === 'custom' && !state.rFrom && !state.rTo) { state.rFrom = dayStr(addDays(new Date(), -29)); state.rTo = dayStr(new Date()); guardarRango(); }
+  syncRango();
   state.visible = 25;
   state.animateWave = true;
   renderAll();
+});
+function guardarRango() { localStorage.setItem('llamadas_desde', state.rFrom); localStorage.setItem('llamadas_hasta', state.rTo); }
+// Muestra el botón activo y los campos de fecha cuando el rango es personalizado
+function syncRango() {
+  $$('#range button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.range === state.range)));
+  $('#rangeCustom').classList.toggle('hidden', state.range !== 'custom');
+  $('#rFrom').value = state.rFrom; $('#rTo').value = state.rTo;
+  const hoy = dayStr(new Date()); $('#rFrom').max = hoy; $('#rTo').max = hoy;
+}
+$('#rangeCustom').addEventListener('change', () => {
+  let d = $('#rFrom').value, h = $('#rTo').value;
+  if (d && h && d > h) [d, h] = [h, d];
+  state.rFrom = d; state.rTo = h; guardarRango(); syncRango();
+  state.visible = 25; state.animateWave = true; renderAll();
 });
 $('#funnels').addEventListener('click', e => {
   const b = e.target.closest('.fchip');
@@ -1414,6 +1474,7 @@ $('#export').addEventListener('click', () => {
 
 /* ================== Negociaciones ================== */
 const negKey = n => n.deal_id || n.call_id;
+const negFunnelNombre = n => funnelOf({ category_id: n.funnel_id, funnel: n.funnel, marca: n.marca }).name;
 const negNombre = n => [n.nombre, n.apellido].filter(Boolean).join(' ') || 'Sin nombre';
 function negTipo(accion) {
   const t = String(accion || '').toLowerCase();
@@ -1456,10 +1517,20 @@ function negFiltered() {
   return state.neg.filter(n => {
     if (state.negAccion !== 'all' && (n.accion || 'Sin acción') !== state.negAccion) return false;
     if (state.negAsesora !== 'all' && (n.asesora || 'Sin asesora') !== state.negAsesora) return false;
+    if (state.negMarca !== 'all' && (n.marca || 'Sin marca') !== state.negMarca) return false;
+    if (state.negFunnel !== 'all' && negFunnelNombre(n) !== state.negFunnel) return false;
+    if (state.negTipo !== 'all' && (n.tipo_lead || 'Sin tipo') !== state.negTipo) return false;
+    if (state.negDesde || state.negHasta) {
+      const ts = negTs(n);
+      if (state.negDesde && ts < parseDay(state.negDesde).getTime()) return false;
+      if (state.negHasta && ts >= addDays(parseDay(state.negHasta), 1).getTime()) return false;
+    }
     if (!q) return true;
     return [negNombre(n), n.celular, n.programa, n.deal_id, n.asesora, n.marca].some(x => String(x || '').toLowerCase().includes(q));
   });
 }
+
+const negHayFiltros = () => !!(state.negQ || state.negDesde || state.negHasta) || ['negAccion', 'negAsesora', 'negMarca', 'negFunnel', 'negTipo'].some(k => state[k] !== 'all');
 
 function renderNeg() {
   let banner = '';
@@ -1476,10 +1547,23 @@ function renderNeg() {
   acciones.forEach(a => { ch += `<button class="fchip" data-a="${esc(a)}" aria-pressed="${state.negAccion === a}" style="--c:${colores[negTipo(a)]}"><i></i>${esc(a)} <em>${cnt[a]}</em></button>`; });
   $('#negChips').innerHTML = ch;
 
-  const asesoras = [...new Set(state.neg.map(n => n.asesora || 'Sin asesora'))].sort();
-  const sel = $('#negAsesora');
-  sel.classList.toggle('hidden', state.negMeta.soloMias || asesoras.length < 2);
-  sel.innerHTML = '<option value="all">Todas las asesoras</option>' + asesoras.map(a => `<option value="${esc(a)}"${state.negAsesora === a ? ' selected' : ''}>${esc(a)}</option>`).join('');
+  // Los desplegables solo ofrecen lo que existe en los datos; el de funnel depende de la marca elegida
+  const unicos = f => [...new Set(state.neg.map(f))].sort((a, b) => a.localeCompare(b, 'es'));
+  const llenar = (id, todos, lista, actual) => {
+    const sel = $(id);
+    sel.innerHTML = `<option value="all">${todos}</option>` + lista.map(v => `<option value="${esc(v)}"${actual === v ? ' selected' : ''}>${esc(v)}</option>`).join('');
+    sel.classList.toggle('hidden', lista.length < 2 && actual === 'all');
+  };
+  const marcas = unicos(n => n.marca || 'Sin marca');
+  const delaMarca = n => state.negMarca === 'all' || (n.marca || 'Sin marca') === state.negMarca;
+  const funnels = [...new Set(state.neg.filter(delaMarca).map(negFunnelNombre))].sort((a, b) => a.localeCompare(b, 'es'));
+  llenar('#negMarca', 'Todas las marcas', marcas, state.negMarca);
+  llenar('#negFunnel', 'Todos los funnels', funnels, state.negFunnel);
+  llenar('#negTipo', 'Todos los tipos de lead', unicos(n => n.tipo_lead || 'Sin tipo'), state.negTipo);
+  llenar('#negAsesora', 'Todas las asesoras', unicos(n => n.asesora || 'Sin asesora'), state.negAsesora);
+  if (state.negMeta.soloMias) $('#negAsesora').classList.add('hidden');
+  $('#negDesde').value = state.negDesde; $('#negHasta').value = state.negHasta;
+  $('#negLimpiar').classList.toggle('hidden', !negHayFiltros());
 
   const body = $('#negRows'), box = $('#negState');
   if (!state.negLoaded) {
@@ -1503,7 +1587,7 @@ function renderNeg() {
   }).join('');
   $('#negMoreBox').classList.toggle('hidden', rows.length <= state.negVisible);
   if (!rows.length) {
-    const filtros = state.negQ || state.negAccion !== 'all' || state.negAsesora !== 'all';
+    const filtros = negHayFiltros();
     box.innerHTML = filtros
       ? '<div class="state"><b>No hay negociaciones con estos filtros</b>Prueba con otra búsqueda o quita un filtro.</div>'
       : '<div class="state"><b>Todavía no hay negociaciones</b>Cuando se analice una llamada contestada, aparecerá aquí con su resumen.</div>';
@@ -1557,7 +1641,18 @@ function openNeg(key, fromEl) {
 }
 
 $('#negChips').addEventListener('click', e => { const b = e.target.closest('.fchip'); if (b) { state.negAccion = b.dataset.a; state.negVisible = 25; renderNeg(); } });
-$('#negAsesora').addEventListener('change', e => { state.negAsesora = e.target.value; state.negVisible = 25; renderNeg(); });
+$('#negFiltros').addEventListener('change', e => {
+  const mapa = { negMarca: 'negMarca', negFunnel: 'negFunnel', negTipo: 'negTipo', negAsesora: 'negAsesora', negDesde: 'negDesde', negHasta: 'negHasta' };
+  const k = mapa[e.target.id]; if (!k) return;
+  state[k] = e.target.value;
+  if (k === 'negMarca') state.negFunnel = 'all';
+  if (state.negDesde && state.negHasta && state.negDesde > state.negHasta) [state.negDesde, state.negHasta] = [state.negHasta, state.negDesde];
+  state.negVisible = 25; renderNeg();
+});
+$('#negLimpiar').addEventListener('click', () => {
+  Object.assign(state, { negQ: '', negAccion: 'all', negAsesora: 'all', negMarca: 'all', negFunnel: 'all', negTipo: 'all', negDesde: '', negHasta: '', negVisible: 25 });
+  $('#negQ').value = ''; renderNeg();
+});
 let negTimer;
 $('#negQ').addEventListener('input', e => { clearTimeout(negTimer); negTimer = setTimeout(() => { state.negQ = e.target.value; state.negVisible = 25; renderNeg(); }, 160); });
 $('#negMore').addEventListener('click', () => { state.negVisible += 25; renderNeg(); });
