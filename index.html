@@ -160,7 +160,7 @@ input,select{font:inherit;color:inherit}
 .btn-ghost{height:40px;padding:0 14px;border-radius:11px;background:var(--bg);font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;color:var(--ink2);transition:color .15s,background .15s}
 .btn-ghost:hover{color:var(--ink);background:var(--line2)}
 
-.table-wrap{overflow-x:auto}
+.table-wrap{overflow-x:auto;position:relative}
 table{width:100%;border-collapse:collapse;min-width:720px}
 th{text-align:left;font-weight:500;font-size:13px;color:var(--ink3);padding:10px 24px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);white-space:nowrap}
 td{padding:14px 24px;border-bottom:1px solid var(--line2);vertical-align:middle}
@@ -352,6 +352,99 @@ form.d-body .d-actions{margin-top:20px}
 .neg-filtros .dl{gap:7px}
 .neg-filtros .btn-ghost{height:38px}
 @media (max-width:700px){.neg-filtros{padding:0 18px 14px}.neg-filtros .select{flex:1 1 140px}}
+
+/* ---- Combo con checkboxes ---- */
+.ms{position:relative}
+.ms-btn{display:flex;align-items:center;gap:8px;height:38px;max-width:100%;padding:0 12px;border-radius:11px;background:var(--bg);border:1px solid transparent;font-size:14px;color:var(--ink);text-align:left}
+.ms-btn:hover{background:var(--line2)}
+.ms-btn.on{border-color:var(--accent);background:var(--accent-soft)}
+.ms-btn[aria-expanded="true"]{border-color:var(--accent)}
+.ms-lbl{color:var(--ink3);flex:none}
+.ms-lbl::after{content:":"}
+.ms-val{font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-btn svg{flex:none;margin-left:auto;color:var(--ink3)}
+.ms-pop{position:fixed;z-index:80;max-width:calc(100vw - 16px);background:var(--sheet);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;max-height:min(420px,70vh)}
+.ms-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px 6px}
+.ms-head b{font-size:13.5px;font-weight:600}
+.ms-clear{font-size:13px;color:var(--accent);font-weight:500}
+.ms-clear:disabled{color:var(--ink3);cursor:default;opacity:.6}
+.ms-list{overflow-y:auto;padding:2px 0}
+.ms-opt{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;cursor:pointer;font-size:14.5px;min-height:44px}
+.ms-opt:hover{background:var(--hover)}
+.ms-opt input{accent-color:var(--accent);width:18px;height:18px;flex:none}
+.ms-opt i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.ms-opt span{flex:1;min-width:0}
+.ms-opt em{font-style:normal;color:var(--ink3);font-size:13px}
+.ms-foot{display:none;padding:8px 6px 4px}
+.ms-wrap{display:none}
+
+@media (max-width:720px){
+  /* los chips pasan a ser un combo con checkboxes */
+  #funnels,#segChips{display:none}
+  .ms-wrap{display:block;margin-top:22px}
+  .ms-wrap .ms-btn{width:100%;height:44px;background:var(--sheet);border-color:var(--line)}
+  .ms-wrap .ms-btn.on{background:var(--accent-soft);border-color:var(--accent)}
+  /* el desplegable sube desde abajo, a todo el ancho */
+  .ms-pop{left:0!important;right:0!important;top:auto!important;bottom:0;width:100%;max-width:none;min-width:0!important;max-height:72vh;border-radius:20px 20px 0 0;border-width:1px 0 0;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+  .ms-foot{display:block}
+  .ms-foot .btn-ghost{width:100%;justify-content:center;background:var(--ink);color:var(--bg);height:46px}
+  .ms-head{padding:12px 12px 8px}
+  .ms-head b{font-size:15px}
+  body.ms-open::after{content:"";position:fixed;inset:0;background:rgba(10,14,28,.45);z-index:79}
+
+  /* menú de arriba: se desliza en vez de ensanchar la página */
+  .topbar-in>*{min-width:0}
+  #nav{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  #nav::-webkit-scrollbar{display:none}
+  #nav button{flex:none;white-space:nowrap;padding:0 14px}
+  .topbar .brand{margin-right:auto}
+
+  .range-row{margin:0 0 18px}
+  #range{max-width:100%;overflow-x:auto;scrollbar-width:none}
+  #range::-webkit-scrollbar{display:none}
+  #range button{flex:none;white-space:nowrap}
+  .wrap{padding-top:28px}
+  .greet{font-size:30px}
+
+  /* filtros de Negociaciones: dos por fila */
+  .neg-filtros{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+  .neg-filtros .ms:nth-child(-n+2){grid-column:1/-1}
+  .neg-filtros .ms-btn{width:100%;height:42px}
+  .neg-filtros .select{width:100%;min-width:0;height:42px;grid-column:1/-1}
+  .neg-filtros .dl{flex-direction:column;align-items:stretch;gap:4px;font-size:12.5px}
+  .neg-filtros .date-in{width:100%;min-width:0;height:42px}
+  .neg-filtros .btn-ghost{grid-column:1/-1;justify-content:center;height:42px}
+  .sheet-head .select,.sheet-head .btn-ghost{flex:1 1 140px}
+}
+
+@media (max-width:860px){
+  /* las tablas pasan a ser tarjetas */
+  .table-wrap .hide-sm{display:none}
+  .table-wrap table,.table-wrap tbody{display:block;min-width:0}
+  .table-wrap thead{display:none}
+  .table-wrap tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line2)}
+  .table-wrap tbody tr:last-child{border-bottom:0}
+  .table-wrap td{display:block;padding:0;border:0;min-width:0}
+  .table-wrap td.r{text-align:left}
+  /* Llamadas */
+  #rows td:nth-child(1){grid-area:1/1}
+  #rows td:nth-child(4){grid-area:1/2;justify-self:end}
+  #rows td:nth-child(2){grid-area:2/1}
+  #rows td:nth-child(6){grid-area:2/2;justify-self:end;color:var(--ink3);font-size:13px}
+  /* Negociaciones */
+  #negRows td:nth-child(1){grid-area:1/1/2/3}
+  #negRows td:nth-child(3){grid-area:2/1/3/3}
+  #negRows .neg-res{flex-direction:row;max-width:none}
+  /* Seguimiento */
+  #segRows td:nth-child(1){grid-area:1/1}
+  #segRows td:nth-child(7){grid-area:1/2;justify-self:end}
+  #segRows td:nth-child(2){grid-area:2/1}
+  #segRows td:nth-child(6){grid-area:2/2;justify-self:end;text-align:right}
+  #segRows td:nth-child(5){grid-area:3/1/4/3;color:var(--ink2);font-size:13.5px}
+  #segRows td:nth-child(5)::before{content:"Próxima llamada: ";color:var(--ink3)}
+  #segRows td:nth-child(5):has(.muted){display:none}
+  .table-wrap .skel-row{display:flex;gap:12px}
+}
 </style>
 </head>
 <body>
@@ -457,6 +550,7 @@ form.d-body .d-actions{margin-top:20px}
     <div id="errorBanner"></div>
 
     <nav class="funnels" id="funnels" aria-label="Filtrar por funnel"></nav>
+    <div class="ms ms-wrap" id="funnelMs"></div>
 
     <section class="sheet">
       <div class="sheet-head">
@@ -500,6 +594,7 @@ form.d-body .d-actions{margin-top:20px}
     </section>
     <div id="segBanner"></div>
     <nav class="funnels seg-chips" id="segChips" aria-label="Filtrar por estado"></nav>
+    <div class="ms ms-wrap" id="segMs"></div>
     <section class="sheet">
       <div class="sheet-head">
         <h2 class="serif">Leads<small id="segCount"></small></h2>
@@ -524,7 +619,6 @@ form.d-body .d-actions{margin-top:20px}
       <p class="lede" id="negLede">Lo que se logró con cada lead: el resumen, la cita y el próximo paso. Es un respaldo de lo que el análisis guarda en Bitrix, ordenado por lead y no por llamada.</p>
     </section>
     <div id="negBanner"></div>
-    <nav class="funnels seg-chips" id="negChips" aria-label="Filtrar por resultado"></nav>
     <section class="sheet">
       <div class="sheet-head">
         <h2 class="serif">Leads<small id="negCount"></small></h2>
@@ -538,12 +632,13 @@ form.d-body .d-actions{margin-top:20px}
         </button>
       </div>
       <div class="neg-filtros" id="negFiltros">
+        <div class="ms" id="negTipoMs"></div>
+        <div class="ms" id="negAccionMs"></div>
         <label class="dl">Desde <input type="date" class="date-in" id="negDesde" aria-label="Desde"></label>
         <label class="dl">Hasta <input type="date" class="date-in" id="negHasta" aria-label="Hasta"></label>
         <select class="select" id="negMarca" aria-label="Filtrar por marca"></select>
         <select class="select" id="negFunnel" aria-label="Filtrar por funnel"></select>
-        <select class="select" id="negTipo" aria-label="Filtrar por tipo de lead"></select>
-        <select class="select hidden" id="negAsesora" aria-label="Filtrar por asesora"></select>
+                <select class="select hidden" id="negAsesora" aria-label="Filtrar por asesora"></select>
         <button class="btn-ghost hidden" id="negLimpiar">Quitar filtros</button>
       </div>
       <div class="table-wrap">
@@ -711,14 +806,79 @@ const state = {
   rows: [], loaded: false, loading: false,
   range: localStorage.getItem('llamadas_rango') || '30',
   rFrom: localStorage.getItem('llamadas_desde') || '', rTo: localStorage.getItem('llamadas_hasta') || '',
-  funnel: 'all', estado: 'all', dir: 'all', q: '', visible: 25,
+  funnels: [], estado: 'all', dir: 'all', q: '', visible: 25,
   view: 'llamadas', cfg: { admin: false, numeros: [], funnels: [] }, cfgError: false,
-  seg: [], segLoaded: false, segError: false, segMeta: { pausa: false, max: 4 }, segEstado: 'all', segQ: '',
+  seg: [], segLoaded: false, segError: false, segMeta: { pausa: false, max: 4 }, segEstados: [], segQ: '',
   aj: null, ajDraft: null, ajError: false,
   detail: {}, animateWave: true, lastFocus: null,
-  neg: [], negLoaded: false, negError: false, negMeta: {}, negQ: '', negAccion: 'all', negAsesora: 'all', negVisible: 25,
-  negDesde: '', negHasta: '', negMarca: 'all', negFunnel: 'all', negTipo: 'all'
+  neg: [], negLoaded: false, negError: false, negMeta: {}, negQ: '', negAcciones: [], negAsesora: 'all', negVisible: 25,
+  negDesde: '', negHasta: '', negMarca: 'all', negFunnel: 'all', negTipos: []
 };
+
+
+/* ================== Combo con checkboxes (multi-selección) ==================
+   En celular reemplaza a los chips; en Negociaciones se usa en todos los tamaños. */
+const msAbierto = {};
+const MS_FLECHA = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+function msRender(box, o) {
+  if (!box) return;
+  const sel = o.sel;
+  const hay = o.opts.length >= 2 || sel.length;
+  box.classList.toggle('hidden', !hay);
+  let txt = o.todos;
+  if (sel.length === 1) txt = (o.opts.find(x => x.v === sel[0]) || { t: sel[0] }).t;
+  else if (sel.length > 1) txt = sel.length + ' elegidos';
+  const abierto = !!msAbierto[o.id];
+  box._ms = o;
+  box.innerHTML = `<button type="button" class="ms-btn${sel.length ? ' on' : ''}" aria-haspopup="true" aria-expanded="${abierto}"><span class="ms-lbl">${esc(o.label)}</span><span class="ms-val">${esc(txt)}</span>${MS_FLECHA}</button>
+    <div class="ms-pop${abierto ? '' : ' hidden'}" role="group" aria-label="${esc(o.label)}">
+      <div class="ms-head"><b>${esc(o.label)}</b><button type="button" class="ms-clear"${sel.length ? '' : ' disabled'}>Quitar selección</button></div>
+      <div class="ms-list">${o.opts.map(x => `<label class="ms-opt"><input type="checkbox" value="${esc(x.v)}"${sel.includes(x.v) ? ' checked' : ''}><i style="--c:${x.c || 'var(--ink3)'}"></i><span>${esc(x.t)}</span><em>${x.n}</em></label>`).join('')}</div>
+      <div class="ms-foot"><button type="button" class="btn-ghost ms-done">Listo</button></div>
+    </div>`;
+  if (abierto) msPosicionar(box);
+}
+function msPosicionar(box) {
+  const btn = box.querySelector('.ms-btn'), pop = box.querySelector('.ms-pop'); if (!btn || !pop) return;
+  const r = btn.getBoundingClientRect();
+  pop.style.minWidth = Math.max(r.width, 260) + 'px';
+  pop.style.top = (r.bottom + 6) + 'px';
+  pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - Math.max(r.width, 260) - 8)) + 'px';
+}
+function msCerrarTodos() {
+  Object.keys(msAbierto).forEach(k => delete msAbierto[k]);
+  $$('.ms').forEach(b => { const p = b.querySelector('.ms-pop'), t = b.querySelector('.ms-btn'); if (p) p.classList.add('hidden'); if (t) t.setAttribute('aria-expanded', 'false'); });
+  document.body.classList.remove('ms-open');
+}
+document.addEventListener('click', e => {
+  const box = e.target.closest('.ms');
+  if (!box) { if (document.body.classList.contains('ms-open')) msCerrarTodos(); return; }
+  const o = box._ms; if (!o) return;
+  if (e.target.closest('.ms-btn')) {
+    const estabaAbierto = !!msAbierto[o.id];
+    msCerrarTodos();
+    if (!estabaAbierto) {
+      msAbierto[o.id] = true;
+      box.querySelector('.ms-pop').classList.remove('hidden');
+      box.querySelector('.ms-btn').setAttribute('aria-expanded', 'true');
+      document.body.classList.add('ms-open');
+      msPosicionar(box);
+    }
+  } else if (e.target.closest('.ms-done')) msCerrarTodos();
+  else if (e.target.closest('.ms-clear')) o.onChange([]);
+});
+document.addEventListener('change', e => {
+  const cb = e.target.closest('.ms-opt input'); if (!cb) return;
+  const box = cb.closest('.ms'), o = box._ms;
+  const top = box.querySelector('.ms-list').scrollTop, val = cb.value;
+  o.onChange([...box.querySelectorAll('.ms-opt input:checked')].map(x => x.value));
+  // al repintar se pierde el scroll y el foco: se devuelven
+  const nuevo = [...box.querySelectorAll('.ms-opt input')].find(x => x.value === val);
+  box.querySelector('.ms-list').scrollTop = top; if (nuevo) nuevo.focus();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('ms-open')) msCerrarTodos(); });
+window.addEventListener('resize', () => { if (document.body.classList.contains('ms-open')) msCerrarTodos(); });
+window.addEventListener('scroll', () => { if (document.body.classList.contains('ms-open') && window.innerWidth > 720) msCerrarTodos(); }, { passive: true });
 
 /* ================== API ================== */
 async function api(action, payload = {}) {
@@ -1021,10 +1181,10 @@ function logout(msg) {
   sessionStorage.removeItem(SESSION_KEY);
   state.token = null; state.user = null; state.rows = []; state.loaded = false; state.detail = {};
   state.cfg = { admin: false, numeros: [], funnels: [] }; state.cfgError = false; state.view = 'llamadas'; FUNNELS = {};
-  state.neg = []; state.negLoaded = false; state.negQ = ''; state.negAccion = 'all'; state.negAsesora = 'all'; state.negVisible = 25;
-  state.negDesde = ''; state.negHasta = ''; state.negMarca = 'all'; state.negFunnel = 'all'; state.negTipo = 'all';
-  state.seg = []; state.segLoaded = false; state.segEstado = 'all'; state.segQ = ''; state.aj = null; state.ajDraft = null;
-  state.funnel = 'all'; state.estado = 'all'; state.dir = 'all'; state.q = '';
+  state.neg = []; state.negLoaded = false; state.negQ = ''; state.negAcciones = []; state.negAsesora = 'all'; state.negVisible = 25;
+  state.negDesde = ''; state.negHasta = ''; state.negMarca = 'all'; state.negFunnel = 'all'; state.negTipos = [];
+  state.seg = []; state.segLoaded = false; state.segEstados = []; state.segQ = ''; state.aj = null; state.ajDraft = null;
+  state.funnels = []; state.estado = 'all'; state.dir = 'all'; state.q = '';
   closeDrawer();
   $('#app').classList.add('hidden');
   $('#login').classList.remove('hidden');
@@ -1173,7 +1333,7 @@ function rangeEnd() {
   return Infinity;
 }
 const inRangeRows = () => { const s = rangeStart(), e = rangeEnd(); return state.rows.filter(r => r.ts >= s && r.ts < e); };
-const scopeRows = () => inRangeRows().filter(r => state.funnel === 'all' || funnelOf(r).id === state.funnel);
+const scopeRows = () => inRangeRows().filter(r => !state.funnels.length || state.funnels.includes(funnelOf(r).id));
 function tableRows() {
   const q = state.q.trim().toLowerCase();
   return scopeRows().filter(r => {
@@ -1213,7 +1373,7 @@ function renderGreeting() {
     else if (state.rTo) pre = `Hasta el ${fmtDay(state.rTo)} se hicieron`;
     else pre = 'En total se han hecho';
   } else pre = `En los últimos ${state.range} días se hicieron`;
-  const fn = state.funnel !== 'all' ? ' en ' + funnelLabel(state.funnel) : '';
+  const fn = state.funnels.length ? ' en ' + state.funnels.map(funnelLabel).join(', ') : '';
   $('#lede').textContent = `${pre} ${n} ${n === 1 ? 'llamada' : 'llamadas'}${fn}, de las cuales ${c} ${c === 1 ? 'fue contestada' : 'fueron contestadas'}.`;
 }
 
@@ -1344,13 +1504,19 @@ function renderFunnels() {
   const counts = {}, info = {};
   rows.forEach(r => { const f = funnelOf(r); counts[f.id] = (counts[f.id] || 0) + 1; info[f.id] = f; });
   const ids = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
-  if (state.funnel !== 'all' && !ids.includes(state.funnel)) ids.push(state.funnel);
-  let h = `<button class="fchip" data-f="all" aria-pressed="${state.funnel === 'all'}">Todos <em>${rows.length}</em></button>`;
+  state.funnels.forEach(id => { if (!ids.includes(id)) ids.push(id); });
+  const infoDe = id => info[id] || { name: funnelLabel(id), color: FALLBACK_COLOR };
+  let h = `<button class="fchip" data-f="all" aria-pressed="${!state.funnels.length}">Todos <em>${rows.length}</em></button>`;
   ids.forEach(id => {
-    const f = info[id] || { name: funnelLabel(id), color: FALLBACK_COLOR };
-    h += `<button class="fchip" data-f="${esc(id)}" aria-pressed="${state.funnel === id}" style="--c:${f.color}"><i></i>${esc(f.name)} <em>${counts[id] || 0}</em></button>`;
+    h += `<button class="fchip" data-f="${esc(id)}" aria-pressed="${state.funnels.includes(id)}" style="--c:${infoDe(id).color}"><i></i>${esc(infoDe(id).name)} <em>${counts[id] || 0}</em></button>`;
   });
   $('#funnels').innerHTML = h;
+  // En celular los chips se cambian por este combo con checkboxes
+  msRender($('#funnelMs'), {
+    id: 'funnel', label: 'Funnel', todos: 'Todos los funnels', sel: state.funnels,
+    opts: ids.map(id => ({ v: id, t: infoDe(id).name, n: counts[id] || 0, c: infoDe(id).color })),
+    onChange: v => { state.funnels = v; state.visible = 25; state.animateWave = true; renderAll(); }
+  });
 }
 
 /* ---- Tabla ---- */
@@ -1376,12 +1542,12 @@ function renderTable() {
     </tr>`;
   }).join('');
   if (!all.length) {
-    const filtros = state.q || state.estado !== 'all' || state.funnel !== 'all' || state.dir !== 'all';
+    const filtros = state.q || state.estado !== 'all' || state.funnels.length || state.dir !== 'all';
     box.innerHTML = filtros
       ? `<div class="state"><b>No hay llamadas con estos filtros</b>Prueba con otra búsqueda o quita algún filtro.<button class="btn-ghost" id="clear">Limpiar filtros</button></div>`
       : `<div class="state"><b>Todavía no hay llamadas en este periodo</b>Cuando Retell termine una llamada, aparecerá aquí.</div>`;
     const c = $('#clear');
-    if (c) c.addEventListener('click', () => { state.q = ''; state.estado = 'all'; state.funnel = 'all'; state.dir = 'all'; $('#q').value = ''; $('#estado').value = 'all'; $('#dir').value = 'all'; state.visible = 25; renderAll(); });
+    if (c) c.addEventListener('click', () => { state.q = ''; state.estado = 'all'; state.funnels = []; state.dir = 'all'; $('#q').value = ''; $('#estado').value = 'all'; $('#dir').value = 'all'; state.visible = 25; renderAll(); });
   } else box.innerHTML = '';
   more.classList.toggle('hidden', all.length <= state.visible);
   $('#more').textContent = `Ver más llamadas (${all.length - state.visible} restantes)`;
@@ -1416,7 +1582,7 @@ $('#rangeCustom').addEventListener('change', () => {
 $('#funnels').addEventListener('click', e => {
   const b = e.target.closest('.fchip');
   if (!b) return;
-  state.funnel = b.dataset.f;
+  state.funnels = b.dataset.f === 'all' ? [] : [b.dataset.f];
   state.visible = 25;
   state.animateWave = true;
   renderAll();
@@ -1515,11 +1681,11 @@ async function loadNeg(silent) {
 function negFiltered() {
   const q = state.negQ.trim().toLowerCase();
   return state.neg.filter(n => {
-    if (state.negAccion !== 'all' && (n.accion || 'Sin acción') !== state.negAccion) return false;
+    if (state.negAcciones.length && !state.negAcciones.includes(n.accion || 'Sin acción')) return false;
     if (state.negAsesora !== 'all' && (n.asesora || 'Sin asesora') !== state.negAsesora) return false;
     if (state.negMarca !== 'all' && (n.marca || 'Sin marca') !== state.negMarca) return false;
     if (state.negFunnel !== 'all' && negFunnelNombre(n) !== state.negFunnel) return false;
-    if (state.negTipo !== 'all' && (n.tipo_lead || 'Sin tipo') !== state.negTipo) return false;
+    if (state.negTipos.length && !state.negTipos.includes(n.tipo_lead || 'Sin tipo')) return false;
     if (state.negDesde || state.negHasta) {
       const ts = negTs(n);
       if (state.negDesde && ts < parseDay(state.negDesde).getTime()) return false;
@@ -1530,7 +1696,7 @@ function negFiltered() {
   });
 }
 
-const negHayFiltros = () => !!(state.negQ || state.negDesde || state.negHasta) || ['negAccion', 'negAsesora', 'negMarca', 'negFunnel', 'negTipo'].some(k => state[k] !== 'all');
+const negHayFiltros = () => !!(state.negQ || state.negDesde || state.negHasta) || state.negAcciones.length > 0 || state.negTipos.length > 0 || ['negAsesora', 'negMarca', 'negFunnel'].some(k => state[k] !== 'all');
 
 function renderNeg() {
   let banner = '';
@@ -1543,9 +1709,20 @@ function renderNeg() {
   state.neg.forEach(n => { const a = n.accion || 'Sin acción'; cnt[a] = (cnt[a] || 0) + 1; });
   const acciones = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]);
   const colores = { cita: 'var(--e-contesto)', seg: 'var(--e-ocupado)', mal: 'var(--e-fallida)', otro: 'var(--e-buzon)' };
-  let ch = `<button class="fchip" data-a="all" aria-pressed="${state.negAccion === 'all'}">Todos <em>${state.neg.length}</em></button>`;
-  acciones.forEach(a => { ch += `<button class="fchip" data-a="${esc(a)}" aria-pressed="${state.negAccion === a}" style="--c:${colores[negTipo(a)]}"><i></i>${esc(a)} <em>${cnt[a]}</em></button>`; });
-  $('#negChips').innerHTML = ch;
+  // Dos combos con checkboxes: acción de la llamada (cita agendada, etc.) y tipo de lead
+  const cntTipo = {};
+  state.neg.forEach(n => { const t = n.tipo_lead || 'Sin tipo'; cntTipo[t] = (cntTipo[t] || 0) + 1; });
+  const tipos = Object.keys(cntTipo).sort((a, b) => cntTipo[b] - cntTipo[a]);
+  msRender($('#negAccionMs'), {
+    id: 'negAccion', label: 'Acción de la llamada', todos: 'Todas las acciones', sel: state.negAcciones,
+    opts: acciones.map(a => ({ v: a, t: a, n: cnt[a], c: colores[negTipo(a)] })),
+    onChange: v => { state.negAcciones = v; state.negVisible = 25; renderNeg(); }
+  });
+  msRender($('#negTipoMs'), {
+    id: 'negTipo', label: 'Tipo de lead', todos: 'Todos los tipos de lead', sel: state.negTipos,
+    opts: tipos.map(t => ({ v: t, t: t, n: cntTipo[t], c: colores[leadTipo(t)] })),
+    onChange: v => { state.negTipos = v; state.negVisible = 25; renderNeg(); }
+  });
 
   // Los desplegables solo ofrecen lo que existe en los datos; el de funnel depende de la marca elegida
   const unicos = f => [...new Set(state.neg.map(f))].sort((a, b) => a.localeCompare(b, 'es'));
@@ -1559,7 +1736,6 @@ function renderNeg() {
   const funnels = [...new Set(state.neg.filter(delaMarca).map(negFunnelNombre))].sort((a, b) => a.localeCompare(b, 'es'));
   llenar('#negMarca', 'Todas las marcas', marcas, state.negMarca);
   llenar('#negFunnel', 'Todos los funnels', funnels, state.negFunnel);
-  llenar('#negTipo', 'Todos los tipos de lead', unicos(n => n.tipo_lead || 'Sin tipo'), state.negTipo);
   llenar('#negAsesora', 'Todas las asesoras', unicos(n => n.asesora || 'Sin asesora'), state.negAsesora);
   if (state.negMeta.soloMias) $('#negAsesora').classList.add('hidden');
   $('#negDesde').value = state.negDesde; $('#negHasta').value = state.negHasta;
@@ -1640,9 +1816,8 @@ function openNeg(key, fromEl) {
   $('#dClose').focus();
 }
 
-$('#negChips').addEventListener('click', e => { const b = e.target.closest('.fchip'); if (b) { state.negAccion = b.dataset.a; state.negVisible = 25; renderNeg(); } });
 $('#negFiltros').addEventListener('change', e => {
-  const mapa = { negMarca: 'negMarca', negFunnel: 'negFunnel', negTipo: 'negTipo', negAsesora: 'negAsesora', negDesde: 'negDesde', negHasta: 'negHasta' };
+  const mapa = { negMarca: 'negMarca', negFunnel: 'negFunnel', negAsesora: 'negAsesora', negDesde: 'negDesde', negHasta: 'negHasta' };
   const k = mapa[e.target.id]; if (!k) return;
   state[k] = e.target.value;
   if (k === 'negMarca') state.negFunnel = 'all';
@@ -1650,7 +1825,7 @@ $('#negFiltros').addEventListener('change', e => {
   state.negVisible = 25; renderNeg();
 });
 $('#negLimpiar').addEventListener('click', () => {
-  Object.assign(state, { negQ: '', negAccion: 'all', negAsesora: 'all', negMarca: 'all', negFunnel: 'all', negTipo: 'all', negDesde: '', negHasta: '', negVisible: 25 });
+  Object.assign(state, { negQ: '', negAcciones: [], negTipos: [], negAsesora: 'all', negMarca: 'all', negFunnel: 'all', negDesde: '', negHasta: '', negVisible: 25 });
   $('#negQ').value = ''; renderNeg();
 });
 let negTimer;
@@ -2078,7 +2253,7 @@ function segSorted(rows) {
 function segFiltered() {
   const q = state.segQ.trim().toLowerCase();
   return segSorted(state.seg.filter(r => {
-    if (state.segEstado !== 'all' && r.estado !== state.segEstado) return false;
+    if (state.segEstados.length && !state.segEstados.includes(r.estado)) return false;
     if (!q) return true;
     return [r.nombre, r.telefono, r.programa, r.deal_id, r.funnel, r.marca].some(x => String(x || '').toLowerCase().includes(q));
   }));
@@ -2101,9 +2276,14 @@ function renderSeg() {
   const ga = $('#segGoAj'); if (ga) ga.addEventListener('click', () => setView('ajustes'));
 
   const cnt = {}; state.seg.forEach(r => { cnt[r.estado] = (cnt[r.estado] || 0) + 1; });
-  let ch = `<button class="fchip" data-e="all" aria-pressed="${state.segEstado === 'all'}">Todos <em>${state.seg.length}</em></button>`;
-  SEG_ESTADOS.forEach(e => { ch += `<button class="fchip" data-e="${e}" aria-pressed="${state.segEstado === e}" style="--c:${SEG_COLOR[e]}"><i></i>${e} <em>${cnt[e] || 0}</em></button>`; });
+  let ch = `<button class="fchip" data-e="all" aria-pressed="${!state.segEstados.length}">Todos <em>${state.seg.length}</em></button>`;
+  SEG_ESTADOS.forEach(e => { ch += `<button class="fchip" data-e="${e}" aria-pressed="${state.segEstados.includes(e)}" style="--c:${SEG_COLOR[e]}"><i></i>${e} <em>${cnt[e] || 0}</em></button>`; });
   $('#segChips').innerHTML = ch;
+  msRender($('#segMs'), {
+    id: 'seg', label: 'Estado', todos: 'Todos los estados', sel: state.segEstados,
+    opts: SEG_ESTADOS.map(e => ({ v: e, t: e, n: cnt[e] || 0, c: SEG_COLOR[e] })),
+    onChange: v => { state.segEstados = v; renderSeg(); }
+  });
 
   const body = $('#segRows'), box = $('#segState');
   if (!state.segLoaded) {
@@ -2134,7 +2314,7 @@ function renderSeg() {
     </tr>`;
   }).join('');
   if (!rows.length) {
-    const filtros = state.segQ || state.segEstado !== 'all';
+    const filtros = state.segQ || state.segEstados.length;
     box.innerHTML = filtros
       ? '<div class="state"><b>No hay leads con estos filtros</b>Prueba con otra búsqueda o elige otro estado.</div>'
       : '<div class="state"><b>Todavía no hay leads en el seguimiento</b>Cuando un lead entre al funnel de Bitrix, aparecerá aquí.</div>';
@@ -2143,7 +2323,7 @@ function renderSeg() {
 
 $('#segChips').addEventListener('click', e => {
   const b = e.target.closest('.fchip'); if (!b) return;
-  state.segEstado = b.dataset.e; renderSeg();
+  state.segEstados = b.dataset.e === 'all' ? [] : [b.dataset.e]; renderSeg();
 });
 let segQTimer;
 $('#segQ').addEventListener('input', e => {
