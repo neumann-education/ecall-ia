@@ -39,9 +39,9 @@ html[data-theme="dark"]{
   --u-in:#6FD0A5; --u-in-bg:#16352A;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{color-scheme:light}
+html{color-scheme:light;overflow-x:clip}
 html[data-theme="dark"]{color-scheme:dark}
-body{font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+body{overflow-x:clip;font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
 .serif{font-weight:600;letter-spacing:-.025em}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input,select{font:inherit;color:inherit}
@@ -198,8 +198,8 @@ th.r,td.r{text-align:right}
 /* ---------- Drawer ---------- */
 .scrim{position:fixed;inset:0;background:rgba(14,18,32,.38);opacity:0;pointer-events:none;transition:opacity .22s;z-index:50}
 .scrim.open{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(540px,100%);background:var(--sheet);z-index:60;transform:translateX(102%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:-24px 0 60px -30px rgba(0,0,0,.35)}
-.drawer.open{transform:none}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(540px,100%);background:var(--sheet);z-index:60;transform:translateX(102%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility 0s .3s;display:flex;flex-direction:column;box-shadow:-24px 0 60px -30px rgba(0,0,0,.35)}
+.drawer.open{transform:none;visibility:visible;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility 0s}
 .d-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0}
 .d-body{flex:1;overflow-y:auto;padding:8px 32px 40px}
 .d-name{font-size:28px;line-height:1.15;margin-top:12px}
@@ -291,6 +291,19 @@ form.d-body .d-actions{margin-top:20px}
 .btn-row:hover{background:var(--line2);color:var(--ink)}
 .btn-row.stop:hover{background:var(--e-rechazo-bg);color:var(--e-rechazo)}
 .btn-row.go{background:var(--accent-soft);color:var(--accent)}
+.seg-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 24px;border-top:1px solid var(--line2);background:var(--hover);font-size:13.5px;color:var(--ink2)}
+.seg-bar.hidden{display:none}
+.seg-bar label{display:flex;align-items:center;gap:9px;cursor:pointer}
+.seg-bar .grow{flex:1}
+.seg-chk,#segAll{width:17px;height:17px;accent-color:var(--accent);flex:none;cursor:pointer}
+.seg-chk[disabled]{visibility:hidden}
+#segRows td,.table-wrap:has(#segRows) th{padding-left:16px;padding-right:16px}
+@media (max-width:860px){#segRows td{padding:0}}
+#segRows .prog{max-width:140px}
+#segRows .who .n{white-space:nowrap}
+#segRows .r{white-space:nowrap}
+.r .btn-row + .btn-row{margin-left:0}
+@media (max-width:720px){.seg-bar{padding:10px 18px}}
 .btn-row.sure{background:var(--e-fallida-bg);color:var(--e-fallida)}
 .banner.pause{background:var(--e-nocontesto-bg);color:var(--e-nocontesto)}
 .seg-chips{margin-top:28px}
@@ -602,6 +615,12 @@ form.d-body .d-actions{margin-top:20px}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input class="input" id="segQ" type="search" placeholder="Buscar lead o deal" aria-label="Buscar en el seguimiento">
         </div>
+      </div>
+      <div class="seg-bar hidden" id="segBar">
+        <label><input type="checkbox" id="segAll" aria-label="Seleccionar todos los leads de la lista"><span id="segBarTxt">Seleccionar todos</span></label>
+        <span class="grow"></span>
+        <button class="btn-row stop hidden" id="segBulkStop" type="button">Detener seleccionados</button>
+        <button class="btn-row hidden" id="segBulkClear" type="button">Quitar selección</button>
       </div>
       <div class="table-wrap">
         <table>
@@ -1109,12 +1128,18 @@ async function demoApi(action, p) {
     return { ok: true, seguimiento: demoSegData().map(r => ({ ...r })), pausa: demoAj.pausa, max_intentos: demoAj.reintentos_min.length + 1 };
   }
   if (action === 'seg_detener') {
-    const r = demoSegData().find(x => x.deal_id === String(p.deal_id));
-    if (!r) return { ok: false, error: 'no_encontrada' };
     if (!String(p.motivo || '').trim()) return { ok: false, error: 'falta_motivo' };
-    if (r.estado !== 'Pendiente') return { ok: false, error: 'no_se_puede' };
-    Object.assign(r, { estado: 'Detenido', proximo_intento: '', ultimo_resultado: 'Detenido: ' + p.motivo, detenido_por: 'demo', detenido_motivo: p.motivo, actualizado: new Date().toISOString() });
-    return { ok: true, bloqueado: !!p.bloquear };
+    const ids = Array.isArray(p.deal_ids) ? p.deal_ids : [p.deal_id];
+    let detenidos = 0; const fallidos = [];
+    ids.forEach(id => {
+      const r = demoSegData().find(x => x.deal_id === String(id));
+      if (!r) { fallidos.push({ deal_id: id, error: 'no_encontrada' }); return; }
+      if (r.estado === 'Detenido') { fallidos.push({ deal_id: id, error: 'no_se_puede' }); return; }
+      Object.assign(r, { estado: 'Detenido', proximo_intento: '', ultimo_resultado: 'Detenido: ' + p.motivo, detenido_por: 'demo', detenido_motivo: p.motivo, actualizado: new Date().toISOString() });
+      detenidos++;
+    });
+    if (!Array.isArray(p.deal_ids) && fallidos.length) return { ok: false, error: fallidos[0].error };
+    return { ok: true, detenidos, fallidos, bloqueado: !!p.bloquear };
   }
   if (action === 'seg_reanudar') {
     const r = demoSegData().find(x => x.deal_id === String(p.deal_id));
@@ -2221,13 +2246,14 @@ function abrirFilaCfg(tr) {
 });
 
 /* ================== Seguimiento ================== */
+const segSel = new Set();
 const SEG_ESTADOS = ['Pendiente', 'Detenido', 'Contestó', 'Agotado', 'Cancelado'];
 const SEG_COLOR = { Pendiente: 'var(--accent)', Detenido: 'var(--e-rechazo)', 'Contestó': 'var(--e-contesto)', Agotado: 'var(--e-nocontesto)', Cancelado: 'var(--e-buzon)' };
 const SEG_ERRORES = {
   no_encontrada: 'Ese lead ya no está en el seguimiento. Actualiza la lista.',
   sin_permiso: 'No tienes permiso sobre el funnel de ese lead.',
   falta_motivo: 'Elige o escribe el motivo.',
-  no_se_puede: 'Ese lead ya no está pendiente, así que no se puede detener. Actualiza la lista.'
+  no_se_puede: 'Ese lead ya estaba detenido. Actualiza la lista.'
 };
 const segBadge = e => `<span class="badge" data-s="${esc(e)}">${esc(e || '—')}</span>`;
 
@@ -2237,6 +2263,7 @@ async function loadSeg(silent) {
     const r = await api('seg_listar');
     if (!r || !r.ok) throw new Error((r && r.error) || 'error');
     state.seg = r.seguimiento || [];
+    [...segSel].forEach(d => { if (!state.seg.some(x => x.deal_id === d && x.estado !== 'Detenido')) segSel.delete(d); });
     state.segMeta = { pausa: !!r.pausa, max: r.max_intentos || 4 };
     state.segError = false;
   } catch (e) { if (!silent || !state.segLoaded) state.segError = true; }
@@ -2300,11 +2327,13 @@ function renderSeg() {
       ? esc(r.detenido_motivo || 'Detenido') + (r.detenido_por ? ' · ' + esc(r.detenido_por) : '')
       : esc(r.ultimo_resultado || '');
     let act;
-    if (r.estado === 'Pendiente') act = `<button class="btn-row stop" data-act="stop" data-deal="${esc(r.deal_id)}">Detener</button>`;
+    const btnStop = `<button class="btn-row stop" data-act="stop" data-deal="${esc(r.deal_id)}">Detener</button>`;
+    if (r.estado === 'Pendiente') act = btnStop;
     else if (r.estado === 'Detenido') act = `<button class="btn-row go" data-act="resume" data-deal="${esc(r.deal_id)}">Reanudar</button>`;
-    else act = `<button class="btn-row" data-act="again" data-deal="${esc(r.deal_id)}">Volver a llamar</button>`;
+    else act = `<button class="btn-row" data-act="again" data-deal="${esc(r.deal_id)}">Volver a llamar</button>` + btnStop;
+    const sel = r.estado !== 'Detenido' ? `<input type="checkbox" class="seg-chk" data-deal="${esc(r.deal_id)}" aria-label="Seleccionar ${esc(r.nombre || 'lead')}"${segSel.has(r.deal_id) ? ' checked' : ''}>` : '<input type="checkbox" class="seg-chk" disabled aria-hidden="true" tabindex="-1">';
     return `<tr data-deal="${esc(r.deal_id)}">
-      <td><div class="who"><span class="avatar" style="--c:${col}">${esc(initials(r.nombre))}</span><div><div class="n">${esc(r.nombre || 'Sin nombre')}</div><div class="s">${esc(r.telefono || '—')}</div></div></div></td>
+      <td><div class="who">${sel}<span class="avatar" style="--c:${col}">${esc(initials(r.nombre))}</span><div><div class="n">${esc(r.nombre || 'Sin nombre')}</div><div class="s">${esc(r.telefono || '—')}</div></div></div></td>
       <td><span class="fun" style="--c:${col}"><i></i>${esc(r.marca || r.funnel || '—')}</span>${r.funnel && r.marca ? `<div class="sub-in">${esc(r.funnel)}</div>` : ''}</td>
       <td class="prog hide-sm" title="${esc(r.programa)}">${esc(r.programa || '—')}</td>
       <td class="hide-sm">${n ? n + ' de ' + state.segMeta.max : '<span class="muted">Sin llamar</span>'}</td>
@@ -2319,7 +2348,36 @@ function renderSeg() {
       ? '<div class="state"><b>No hay leads con estos filtros</b>Prueba con otra búsqueda o elige otro estado.</div>'
       : '<div class="state"><b>Todavía no hay leads en el seguimiento</b>Cuando un lead entre al funnel de Bitrix, aparecerá aquí.</div>';
   } else box.innerHTML = '';
+  segBarUpdate();
 }
+
+function segSelectable() { return segFiltered().filter(r => r.estado !== 'Detenido'); }
+function segBarUpdate() {
+  const bar = $('#segBar'), todos = segSelectable(), n = segSel.size;
+  bar.classList.toggle('hidden', !state.segLoaded || !todos.length);
+  const marcados = todos.filter(r => segSel.has(r.deal_id)).length;
+  const all = $('#segAll');
+  all.checked = todos.length > 0 && marcados === todos.length;
+  all.indeterminate = marcados > 0 && marcados < todos.length;
+  $('#segBarTxt').textContent = n ? `${n} seleccionado${n === 1 ? '' : 's'}` : `Seleccionar todos (${todos.length})`;
+  $('#segBulkStop').classList.toggle('hidden', !n);
+  $('#segBulkClear').classList.toggle('hidden', !n);
+  $('#segBulkStop').textContent = `Detener seleccionados (${n})`;
+}
+$('#segAll').addEventListener('change', e => {
+  segSelectable().forEach(r => { if (e.target.checked) segSel.add(r.deal_id); else segSel.delete(r.deal_id); });
+  renderSeg();
+});
+$('#segBulkClear').addEventListener('click', () => { segSel.clear(); renderSeg(); });
+$('#segBulkStop').addEventListener('click', () => {
+  const lista = state.seg.filter(r => segSel.has(r.deal_id) && r.estado !== 'Detenido');
+  if (lista.length) openSegForm(lista);
+});
+$('#segRows').addEventListener('change', e => {
+  const c = e.target.closest('.seg-chk'); if (!c || c.disabled) return;
+  if (c.checked) segSel.add(c.dataset.deal); else segSel.delete(c.dataset.deal);
+  segBarUpdate();
+});
 
 $('#segChips').addEventListener('click', e => {
   const b = e.target.closest('.fchip'); if (!b) return;
@@ -2352,27 +2410,33 @@ $('#segRows').addEventListener('click', async e => {
 });
 
 const MOTIVOS_STOP = [['no_llamar', 'Pidió que no lo llamen'], ['asesor', 'Ya lo atiende un asesor'], ['otro', 'Otro motivo']];
-function segFormHTML(r) {
-  const marca = r.marca || (FUNNELS[r.category_id] || {}).marca || 'esta marca';
-  return formTop('Detener seguimiento') + `
-    <form class="d-body" id="segForm" data-deal="${esc(r.deal_id)}" novalidate>
-      <h2 class="d-name serif">${esc(r.nombre || 'Sin nombre')}</h2>
-      <p class="cfg-note">${esc(r.telefono || '')} · ${esc(marca)}${r.funnel ? ' · ' + esc(r.funnel) : ''}</p>
+function segFormHTML(lista) {
+  const varios = lista.length > 1, r = lista[0];
+  const marca = varios ? 'su marca' : (r.marca || (FUNNELS[r.category_id] || {}).marca || 'esta marca');
+  const enMarca = varios ? 'su marca' : marca;
+  const cabecera = varios
+    ? `<h2 class="d-name serif">${lista.length} leads seleccionados</h2><p class="cfg-note">${esc(lista.slice(0, 3).map(x => x.nombre || x.telefono || 'Sin nombre').join(', '))}${lista.length > 3 ? ' y ' + (lista.length - 3) + ' más' : ''}</p>`
+    : `<h2 class="d-name serif">${esc(r.nombre || 'Sin nombre')}</h2><p class="cfg-note">${esc(r.telefono || '')} · ${esc(marca)}${r.funnel ? ' · ' + esc(r.funnel) : ''}</p>`;
+  return formTop(varios ? 'Detener ' + lista.length + ' leads' : 'Detener seguimiento') + `
+    <form class="d-body" id="segForm" novalidate>
+      ${cabecera}
       <div style="height:20px"></div>
       <div class="field"><span>Motivo</span>
         <div class="motivos">${MOTIVOS_STOP.map((m, i) => `<label class="motivo"><input type="radio" name="motivo" value="${m[0]}" ${i === 0 ? 'checked' : ''}><span>${m[1]}</span></label>`).join('')}</div>
       </div>
       <label class="field hidden" id="segOtroBox"><span>Cuéntanos el motivo</span><input class="input" name="otro" maxlength="120" autocomplete="off"></label>
-      <label class="check" style="margin-bottom:6px"><input type="checkbox" name="bloquear" checked> No volver a llamar a este número en ${esc(marca)}</label>
-      <small class="f-hint">Solo se detiene este lead en ${esc(marca)}. Si el mismo número pidió información en otra marca, esa sigue su curso. Si ya hay una llamada en curso, termina, pero no se volverá a llamar. Puedes reanudarlo cuando quieras.</small>
+      <label class="check" style="margin-bottom:6px"><input type="checkbox" name="bloquear" checked> ${varios ? 'No volver a llamar a estos números en su marca' : 'No volver a llamar a este número en ' + esc(marca)}</label>
+      <small class="f-hint">Solo se ${varios ? 'detienen estos leads' : 'detiene este lead'} en ${esc(enMarca)}. Si el mismo número pidió información en otra marca, esa sigue su curso. Si ya hay una llamada en curso, termina, pero no se volverá a llamar. Puedes reanudarlo cuando quieras.</small>
       <p class="form-error" id="segErr" role="alert"></p>
-      <div class="d-actions"><button type="submit" class="main" id="segSave">Detener seguimiento</button><button type="button" class="alt" id="segCancel">Cancelar</button></div>
+      <div class="d-actions"><button type="submit" class="main" id="segSave">${varios ? 'Detener ' + lista.length + ' leads' : 'Detener seguimiento'}</button><button type="button" class="alt" id="segCancel">Cancelar</button></div>
     </form>`;
 }
+let segDetenerLista = [];
 function openSegForm(r) {
+  segDetenerLista = Array.isArray(r) ? r : [r];
   const dr = $('#drawer');
   state.lastFocus = document.activeElement; state.openId = null;
-  dr.innerHTML = segFormHTML(r);
+  dr.innerHTML = segFormHTML(segDetenerLista);
   dr.setAttribute('aria-label', 'Detener seguimiento');
   dr.classList.add('open'); $('#scrim').classList.add('open'); dr.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -2396,15 +2460,20 @@ async function onSegSubmit(e) {
   if (v === 'otro') motivo = String(f.elements.otro.value || '').trim();
   if (!motivo) { err.textContent = SEG_ERRORES.falta_motivo; return; }
   err.textContent = ''; btn.disabled = true; btn.textContent = 'Deteniendo…';
+  const varios = segDetenerLista.length > 1;
+  const datos = { motivo, bloquear: !!f.elements.bloquear.checked };
+  if (varios) datos.deal_ids = segDetenerLista.map(x => x.deal_id); else datos.deal_id = segDetenerLista[0].deal_id;
   try {
-    const r = await api('seg_detener', { deal_id: f.dataset.deal, motivo, bloquear: !!f.elements.bloquear.checked });
+    const r = await api('seg_detener', datos);
     if (!r || !r.ok) { err.textContent = SEG_ERRORES[r && r.error] || 'No pudimos detenerlo. Inténtalo otra vez.'; return; }
+    segDetenerLista.forEach(x => segSel.delete(x.deal_id));
     await loadSeg(true);
     closeDrawer();
-    toast(r.bloqueado ? 'Detenido. No se volverá a llamar a ese número en esa marca' : 'Seguimiento detenido');
+    if (varios) toast(r.detenidos + ' lead' + (r.detenidos === 1 ? '' : 's') + ' detenido' + (r.detenidos === 1 ? '' : 's') + (r.fallidos && r.fallidos.length ? ' · ' + r.fallidos.length + ' no se pudieron detener' : ''));
+    else toast(r.bloqueado ? 'Detenido. No se volverá a llamar a ese número en esa marca' : 'Seguimiento detenido');
   } catch (ex) {
     err.textContent = 'No pudimos detenerlo. Revisa tu conexión e inténtalo otra vez.';
-  } finally { btn.disabled = false; btn.textContent = 'Detener seguimiento'; }
+  } finally { btn.disabled = false; btn.textContent = varios ? 'Detener ' + segDetenerLista.length + ' leads' : 'Detener seguimiento'; }
 }
 
 /* ================== Ajustes de llamadas (administrador) ================== */
