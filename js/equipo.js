@@ -79,6 +79,8 @@
     if (asesoras) pintarAsesoras(); else pintarEquipos();
   }
 
+  var pgAs = (function () { var t = $('#rowsAs'), w = t.closest('.scroll') || t.closest('table'); var d = document.createElement('div'); w.parentNode.insertBefore(d, w.nextSibling); var g = Pager.make(d); g.onChange(function () { pintarAsesoras(); }); return g; })();
+
   function pintarAsesoras() {
     var marcasEn = [];
     state.asesoras.forEach(function (a) { var m = a.marca || 'Sin marca'; if (marcasEn.indexOf(m) < 0) marcasEn.push(m); });
@@ -92,7 +94,7 @@
       if (state.marca !== 'all' && (a.marca || 'Sin marca') !== state.marca) return false;
       return !q || (a.nombre + ' ' + a.bitrix_id + ' ' + a.correo).toLowerCase().indexOf(q) >= 0;
     });
-    $('#rowsAs').innerHTML = v.map(function (a) {
+    $('#rowsAs').innerHTML = pgAs.slice(v, [state.marca, state.q].join('|')).map(function (a) {
       return '<tr data-id="' + esc(a.bitrix_id) + '">' +
         '<td><div class="person">' + avatar(a.nombre) + '<div><b>' + esc(a.nombre) + '</b></div></div></td>' +
         '<td><code>' + esc(a.bitrix_id) + '</code></td>' +

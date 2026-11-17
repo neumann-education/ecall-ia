@@ -97,9 +97,10 @@
     });
   }
 
+  var pg = (function () { var t = $('#rows'), w = t.closest('.scroll') || t.closest('table'); var d = document.createElement('div'); w.parentNode.insertBefore(d, w.nextSibling); var g = Pager.make(d); g.onChange(function () { pintar(); }); return g; })();
   function pintar() {
     var v = visibles();
-    $('#rows').innerHTML = v.map(function (u) {
+    $('#rows').innerHTML = pg.slice(v, [state.f, state.q].join('|')).map(function (u) {
       var soyYo = u.usuario === String(yo.usuario).toLowerCase();
       return '<tr class="' + (u.activo === 'Sí' ? '' : 'off') + '" data-u="' + esc(u.usuario) + '">' +
         '<td><div class="person">' + avatar(u.nombre) + '<div><b>' + esc(u.nombre) + (soyYo ? ' <span>(tú)</span>' : '') + '</b><span>' + esc(u.usuario) + (u.correo ? ' · ' + esc(u.correo) : '') + '</span></div></div></td>' +

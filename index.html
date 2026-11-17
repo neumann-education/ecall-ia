@@ -583,7 +583,7 @@ form.d-body .d-actions{margin-top:20px}
         </table>
       </div>
       <div id="stateBox"></div>
-      <div class="more hidden" id="moreBox"><button class="btn-ghost" id="more">Ver más llamadas</button></div>
+      <div id="pgCalls"></div>
     </section>
   </main>
 
@@ -610,6 +610,7 @@ form.d-body .d-actions{margin-top:20px}
         </table>
       </div>
       <div id="segState"></div>
+      <div id="pgSegBox"></div>
     </section>
   </main>
 
@@ -648,7 +649,7 @@ form.d-body .d-actions{margin-top:20px}
         </table>
       </div>
       <div id="negState"></div>
-      <div class="more hidden" id="negMoreBox"><button class="btn-ghost" id="negMore">Ver más</button></div>
+      <div id="pgNeg"></div>
     </section>
   </main>
 
@@ -705,6 +706,7 @@ form.d-body .d-actions{margin-top:20px}
 <noscript><p style="padding:24px">Este panel necesita JavaScript para funcionar.</p></noscript>
 
 <script src="js/config.js"></script>
+<script src="js/pager.js"></script>
 <script>
 (() => {
 'use strict';
@@ -1519,17 +1521,20 @@ function renderFunnels() {
   });
 }
 
+const pgCalls = Pager.make($('#pgCalls')), pgNeg = Pager.make($('#pgNeg')), pgSeg = Pager.make($('#pgSegBox'));
+pgCalls.onChange(() => renderTable()); pgNeg.onChange(() => renderNeg()); pgSeg.onChange(() => renderSeg());
+
 /* ---- Tabla ---- */
 function renderTable() {
-  const body = $('#rows'), box = $('#stateBox'), more = $('#moreBox');
+  const body = $('#rows'), box = $('#stateBox');
   if (!state.loaded) {
     body.innerHTML = Array(6).fill('<tr class="skel-row"><td><div class="skel" style="width:70%"></div></td><td><div class="skel" style="width:60%"></div></td><td class="hide-sm"><div class="skel" style="width:80%"></div></td><td><div class="skel" style="width:70px"></div></td><td class="hide-sm"><div class="skel" style="width:40px;margin-left:auto"></div></td><td><div class="skel" style="width:80px;margin-left:auto"></div></td></tr>').join('');
-    box.innerHTML = ''; more.classList.add('hidden'); $('#count').textContent = '';
+    box.innerHTML = ''; pgCalls.hide(); $('#count').textContent = '';
     return;
   }
   const all = tableRows();
   $('#count').textContent = all.length;
-  const shown = all.slice(0, state.visible);
+  const shown = pgCalls.slice(all, [state.q, state.estado, state.dir, state.funnels.join(), state.range, state.rFrom, state.rTo].join('|'));
   body.innerHTML = shown.map(r => {
     const f = funnelOf(r);
     return `<tr tabindex="0" data-id="${esc(r.call_id)}">
@@ -1549,8 +1554,6 @@ function renderTable() {
     const c = $('#clear');
     if (c) c.addEventListener('click', () => { state.q = ''; state.estado = 'all'; state.funnels = []; state.dir = 'all'; $('#q').value = ''; $('#estado').value = 'all'; $('#dir').value = 'all'; state.visible = 25; renderAll(); });
   } else box.innerHTML = '';
-  more.classList.toggle('hidden', all.length <= state.visible);
-  $('#more').textContent = `Ver más llamadas (${all.length - state.visible} restantes)`;
 }
 
 /* ================== Eventos de la interfaz ================== */
@@ -1595,7 +1598,6 @@ $('#q').addEventListener('input', e => {
 $('#estado').addEventListener('change', e => { state.estado = e.target.value; state.visible = 25; renderTable(); });
 $('#dir').addEventListener('change', e => { state.dir = e.target.value; state.visible = 25; renderTable(); });
 $('#nav').addEventListener('click', e => { const b = e.target.closest('button[data-view]'); if (b) setView(b.dataset.view); });
-$('#more').addEventListener('click', () => { state.visible += 25; renderTable(); });
 $('#refresh').addEventListener('click', () => {
   if (state.view === 'seguimiento') loadSeg(false);
   else if (state.view === 'negociaciones') loadNeg(false);
@@ -1744,12 +1746,12 @@ function renderNeg() {
   const body = $('#negRows'), box = $('#negState');
   if (!state.negLoaded) {
     body.innerHTML = Array(5).fill('<tr class="skel-row"><td><div class="skel" style="width:70%"></div></td><td class="hide-sm"><div class="skel" style="width:80%"></div></td><td><div class="skel" style="width:90px"></div></td><td class="hide-sm"><div class="skel" style="width:60%"></div></td><td class="hide-sm"><div class="skel" style="width:60%"></div></td><td><div class="skel" style="width:70px"></div></td></tr>').join('');
-    box.innerHTML = ''; $('#negCount').textContent = ''; $('#negMoreBox').classList.add('hidden');
+    box.innerHTML = ''; $('#negCount').textContent = ''; pgNeg.hide();
     return;
   }
   const rows = negFiltered();
   $('#negCount').textContent = rows.length;
-  body.innerHTML = rows.slice(0, state.negVisible).map(n => {
+  body.innerHTML = pgNeg.slice(rows, [state.negQ, state.negAcciones.join(), (state.negTipos || []).join(), state.negAsesora, state.negMarca, state.negFunnel, state.negDesde, state.negHasta].join('|')).map(n => {
     const f = funnelOf({ category_id: n.funnel_id, funnel: n.funnel, marca: n.marca });
     const ts = negTs(n);
     return `<tr data-k="${esc(negKey(n))}" tabindex="0">
@@ -1761,7 +1763,6 @@ function renderNeg() {
       <td class="r hide-sm">${ts ? esc(fmtWhen(ts)) : '—'}${n.llamadas && n.llamadas.length > 1 ? `<div class="sub-in">${n.llamadas.length} llamadas</div>` : ''}</td>
     </tr>`;
   }).join('');
-  $('#negMoreBox').classList.toggle('hidden', rows.length <= state.negVisible);
   if (!rows.length) {
     const filtros = negHayFiltros();
     box.innerHTML = filtros
@@ -1830,7 +1831,6 @@ $('#negLimpiar').addEventListener('click', () => {
 });
 let negTimer;
 $('#negQ').addEventListener('input', e => { clearTimeout(negTimer); negTimer = setTimeout(() => { state.negQ = e.target.value; state.negVisible = 25; renderNeg(); }, 160); });
-$('#negMore').addEventListener('click', () => { state.negVisible += 25; renderNeg(); });
 $('#negRows').addEventListener('click', e => { const tr = e.target.closest('tr[data-k]'); if (tr) openNeg(tr.dataset.k, tr); });
 $('#negRows').addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -2288,12 +2288,12 @@ function renderSeg() {
   const body = $('#segRows'), box = $('#segState');
   if (!state.segLoaded) {
     body.innerHTML = Array(5).fill('<tr class="skel-row"><td><div class="skel" style="width:70%"></div></td><td><div class="skel" style="width:60%"></div></td><td class="hide-sm"><div class="skel" style="width:80%"></div></td><td class="hide-sm"><div class="skel" style="width:50px"></div></td><td><div class="skel" style="width:90px"></div></td><td><div class="skel" style="width:70px"></div></td><td></td></tr>').join('');
-    box.innerHTML = ''; $('#segCount').textContent = '';
+    box.innerHTML = ''; $('#segCount').textContent = ''; pgSeg.hide();
     return;
   }
   const rows = segFiltered();
   $('#segCount').textContent = rows.length;
-  body.innerHTML = rows.map(r => {
+  body.innerHTML = pgSeg.slice(rows, [state.segQ, state.segEstados.join()].join('|')).map(r => {
     const col = (FUNNELS[r.category_id] || {}).color || colorFor(r.category_id || r.marca || 'x');
     const n = Number(r.intento) || 0;
     const detalle = r.estado === 'Detenido'
