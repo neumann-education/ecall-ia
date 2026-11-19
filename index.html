@@ -1276,7 +1276,7 @@ $('#loginForm').addEventListener('submit', async e => {
   err.textContent = '';
   setLoginBusy(true);
   try {
-    const r = await api('login', { usuario: $('#u').value, password: $('#p').value });
+    const r = await api('login', { usuario: $('#u').value, password: $('#p').value, recordar: $('#remember').checked });
     if (!r || !r.ok) {
       err.textContent = r && r.error === 'bloqueado'
         ? 'Demasiados intentos. Espera 10 minutos e inténtalo de nuevo.'
